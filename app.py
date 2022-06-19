@@ -103,8 +103,8 @@ def Play(ready):
                 if(currentTime() - last_time > 20):
                     last_time = currentTime()
                     # i+=1
-                    # fuck = np.sum(red_diff)
-                    # cv2.imwrite('Strum{i}_{fuck}.png'.format(i=i,fuck=fuck), img)
+                    # lolworkpls = np.sum(red_diff)
+                    # cv2.imwrite('Strum{i}_{lolworkpls}.png'.format(i=i,lolworkpls=lolworkpls), img)
                     releaseAll()
                     strum(notes) 
             
@@ -114,14 +114,7 @@ def currentTime():
 def strum(input):
     for x in input:
         key.press(str(x))
-    key.tap(Key.down)
- 
-def distance(x, y):
-    if x >= y:
-        result = x - y
-    else:
-        result = y - x
-    return result       
+    key.tap(Key.down)     
 
 def releaseAll():
     key.release('a')
@@ -131,9 +124,6 @@ def releaseAll():
     key.release('g')
     
 main(True,False)
-
-
-
 
 ###########
                 #       img[y1:y2, x1:x2]
