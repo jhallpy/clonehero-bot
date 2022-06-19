@@ -1,4 +1,3 @@
-#Importing PIL to grab a screenshot of the screen
 import keyboard
 import numpy as np
 import time
@@ -11,6 +10,8 @@ camera = dxcam.create()
 key = Controller()
 dxcam.device_info()
 
+#TODO: Rethink how to do the program loop. I'm not certain if this currently is slowing down the program or not. 
+# I need to reasearch more into Python performance testing. 
 def main(run, ready):
     while(run):
         if not ready and keyboard.is_pressed('F1'):
@@ -28,11 +29,14 @@ def Play(ready):
     
         last_time = currentTime()
         
+        #TODO: Potentially make this capture area smaller to increase capture speed.
+        #TODO: Determine if HSV would serve better than BGR. Then convert with openCV. Easy enough.
         capture_area = (650,850,1325,970)
         img = camera.grab(capture_area)
         cv2.imwrite('test_image.png', img)
         i=0
         
+        #TODO: Find the best position to screengrab. I need to make this more consistent.
         #77,109 80,112
         green_bg = img[109:113, 77:81]
         # #224,111
@@ -69,6 +73,7 @@ def Play(ready):
             else:
                 continue
             
+            #TODO: Find the lowest non note value in order to speed up the if statements. 
             green_diff = cv2.subtract(np.asarray(green_check), np.asarray(green_bg)) + cv2.subtract(np.asarray(green_bg), np.asarray(green_check))
             green_diff[abs(green_diff) < 20.0] = 0
             
