@@ -1,162 +1,132 @@
-import keyboard
 import numpy as np
 import time
-from pynput.keyboard import Key, Controller
+from pynput.keyboard import Key, Controller, Listener, KeyCode
 import cv2
 import dxcam
-from PIL import Image
+import threading
 
 camera = dxcam.create()
-key = Controller()
-dxcam.device_info()
+key_press = Controller()
+capture_area = (650,850,1325,970)
+start_stop_key = KeyCode(char='t')
+stop_key = KeyCode(char='y')
 
-#TODO: Rethink how to do the program loop. I'm not certain if this currently is slowing down the program or not. 
-# I need to reasearch more into Python performance testing. 
-def main(run, ready):
-    while(run):
-        if not ready and keyboard.is_pressed('F1'):
-            ready = True
-            releaseAll()
-            Play(ready)
-            run = False
-        elif keyboard.is_pressed('F3'):
-            releaseAll()
-            camera.stop()
-            KeyboardInterrupt()
-            break
+class PlayRedux(threading.Thread):
+    def __init__(self):
+        super(PlayRedux, self).__init__()
+        self.running = False
+        self.program_running = True
+        self.capture_area = capture_area
+        
+        img_bg = camera.grab(self.capture_area)
+        self.green_bg = img_bg[109:113, 77:81]
+        self.red_bg = img_bg[111:114, 224:227]
+        self.yellow_bg = img_bg[103:106, 224:227]
+        self.blue_bg = img_bg[115:118, 515:518]
+        
+    def start_playing(self):
+        self.running = True
+        
+    def stop_playing(self):
+        self.running = False
+     
+    def exit(self):
+        self.stop_playing()
+        self.program_running = False
+                
+    def capture(self):
+        self.img_check = camera.grab(self.capture_area)
     
-def Play(ready):
+    def set_area(self):
+        # TODO: Update capture points inside the image. Could lead to better results. 
+        self.green_check = self.img_check[109:113, 77:81]
+        self.red_check = self.img_check[111:114, 224:227]
+        self.yellow_check = self.img_check[103:106, 224:227]
+        self.blue_check = self.img_check[115:118, 515:518]
+
+    def background_subtraction(self):
+        self.green_diff = cv2.subtract(np.asarray(self.green_check), np.asarray(self.green_bg)) + cv2.subtract(np.asarray(self.green_bg), np.asarray(self.green_check))
+        self.green_diff[abs(self.green_diff) < 20.0] = 0
+        
+        self.red_diff = cv2.subtract(np.asarray(self.red_check), np.asarray(self.red_bg)) + cv2.subtract(np.asarray(self.red_bg), np.asarray(self.red_check))
+        self.red_diff[abs(self.red_diff) < 58.0] = 0
+        
+        self.yellow_diff = cv2.subtract(np.asarray(self.yellow_check), np.asarray(self.yellow_bg)) + cv2.subtract(np.asarray(self.yellow_bg), np.asarray(self.yellow_check))
+        self.yellow_diff[abs(self.yellow_diff) < 21.0] = 0
+        
+        self.blue_diff = cv2.subtract(np.asarray(self.blue_check), np.asarray(self.blue_bg)) + cv2.subtract(np.asarray(self.blue_bg), np.asarray(self.blue_check))
+        self.blue_diff[abs(self.blue_diff) < 20.0] = 0
     
-        last_time = currentTime()
+    # def strum(input):
+    #     return True
+    #     # for x in input:
+    #     #     key.press(str(x))
+    #     # key.tap(Key.down)
+    # def releaseAll(self):
+    #     key_press.release('a')
+    #     key_press.release('s')
+    #     key_press.release('d')
+    #     key_press.release('f')
+    #     key_press.release('g')
         
-        #TODO: Potentially make this capture area smaller to increase capture speed.
-        #TODO: Determine if HSV would serve better than BGR. Then convert with openCV. Easy enough.
-        capture_area = (650,850,1325,970)
-        img = camera.grab(capture_area)
-        cv2.imwrite('test_image.png', img)
-        i=0
-        
-        #TODO: Find the best position to screengrab. I need to make this more consistent.
-        #77,109 80,112
-        green_bg = img[109:113, 77:81]
-        # #224,111
-        # red_bg = img[111:114, 224:227]
-        # 224,103
-        red_bg = img[103:106, 224:227]
-        #370,111
-        yellow_bg = img[111:114, 370:373]
-        # 515,115
-        blue_bg = img[115:118, 515:518]
-        
-        
-        while(ready):
-            
-            notes = []
-            
-            if keyboard.is_pressed('F2'):
-                camera.stop()
-                ready = False
-                releaseAll()
-                print('-----------')
-                main(True, False)
-                break
-            
-            img = camera.grab(capture_area)
-            
-            
-            
-            if not (img is None):
-                green_check = img[109:113, 77:81]
-                red_check = img[106:109, 224:227]
-                yellow_check = img[111:114, 370:373]
-                blue_check = img[115:118, 515:518]
-            else:
-                continue
-            
-            #TODO: Find the lowest non note value in order to speed up the if statements. 
-            green_diff = cv2.subtract(np.asarray(green_check), np.asarray(green_bg)) + cv2.subtract(np.asarray(green_bg), np.asarray(green_check))
-            green_diff[abs(green_diff) < 20.0] = 0
-            
-            red_diff = cv2.subtract(np.asarray(red_check), np.asarray(red_bg)) + cv2.subtract(np.asarray(red_bg), np.asarray(red_check))
-            red_diff[abs(red_diff) < 58.0] = 0
-            
-            yellow_diff = cv2.subtract(np.asarray(yellow_check), np.asarray(yellow_bg)) + cv2.subtract(np.asarray(yellow_bg), np.asarray(yellow_check))
-            yellow_diff[abs(yellow_diff) < 21.0] = 0
-            
-            blue_diff = cv2.subtract(np.asarray(blue_check), np.asarray(blue_bg)) + cv2.subtract(np.asarray(blue_bg), np.asarray(blue_check))
-            blue_diff[abs(blue_diff) < 20.0] = 0
-            
-            if(np.sum(green_diff)<=250 and np.sum(red_diff)<=200):
-                continue
+    def run(self):
+        self.capture()
+        self.set_area()
+        while self.program_running:
+            while self.running:
+                print(self.img_check)
+                if (self.img_check is None):
+                    continue
+                else:
+                    start = current_time()
+                    self.capture()
+                    self.set_area()
+                    self.background_subtraction()
+                    print(current_time() - start)
                 
-            if(np.sum(green_diff)>250):
-                print('Green:   ' +str(np.sum(green_diff)))
-                notes.append('a')
-            if(np.sum(red_diff)>200):
-                print('Red:   ' +str(np.sum(red_diff)))
-                notes.append('s')
-            # if(np.sum(yellow_diff)>0):
-            #     notes.append('d')
-            # if(np.sum(blue_diff)>0):
-            #     notes.append('f')
-            if(np.sum(green_diff)>280 or np.sum(red_diff)>200):
-                #  or np.sum(yellow_diff)>0 or np.sum(blue_diff)>0
-                
-                # print('Green: '+str(np.sum(green_diff)))
-                # print('Red: '+str(np.sum(red_diff)))
-                # print('Yellow: ' +str(np.sum(yellow_diff)))
-                if(currentTime() - last_time > 20):
-                    last_time = currentTime()
-                    # i+=1
-                    # lolworkpls = np.sum(red_diff)
-                    # cv2.imwrite('Strum{i}_{lolworkpls}.png'.format(i=i,lolworkpls=lolworkpls), img)
-                    releaseAll()
-                    strum(notes) 
-            
-def currentTime():
-    return round(time.time() * 1000)
+            time.sleep(0.01)
+                # notes = []
+                # if(np.sum(self.green_diff)<=250 and np.sum(self.red_diff)<=200):
+                #     continue
+                # if(np.sum(self.green_diff)>250):
+                #     print('Green:   ' +str(np.sum(self.green_diff)))
+                #     notes.append('a')
+                # if(np.sum(self.red_diff)>200):
+                #     print('Red:   ' +str(np.sum(self.red_diff)))
+                #     notes.append('s')
+                # # if(np.sum(yellow_diff)>0):
+                # #     notes.append('d')
+                # # if(np.sum(blue_diff)>0):
+                # #     notes.append('f')
+                # if(np.sum(self.green_diff)>280 or np.sum(self.red_diff)>200):
+                #     #  or np.sum(yellow_diff)>0 or np.sum(blue_diff)>0
+                    
+                #     # print('Green: '+str(np.sum(self.green_diff)))
+                #     # print('Red: '+str(np.sum(self.red_diff)))
+                #     # print('Yellow: ' +str(np.sum(yellow_diff)))
+                #     if(currentTime() - last_time > 20):
+                #         last_time = currentTime()
+                #         # i+=1
+                #         # lolworkpls = np.sum(self.red_diff)
+                #         # cv2.imwrite('Strum{i}_{lolworkpls}.png'.format(i=i,lolworkpls=lolworkpls), img)
+                #         releaseAll()
+                #         strum(notes)
 
-def strum(input):
-    for x in input:
-        key.press(str(x))
-    key.tap(Key.down)     
+play_thread = PlayRedux()
+play_thread.start()
 
-def releaseAll():
-    key.release('a')
-    key.release('s')
-    key.release('d')
-    key.release('f')
-    key.release('g')
-    
-main(True,False)
+def current_time():
+    return int(round(time.time() * 1000))
+  
+def on_press(key):
+    if key == start_stop_key:
+        if play_thread.running:
+            play_thread.stop_playing()
+        else:
+            play_thread.start_playing()
+    elif key == stop_key:
+        play_thread.exit()
+        listener.stop()
 
-###########
-                #       img[y1:y2, x1:x2]
-                ###########
-                # green_img_low = img[49:52, 47:50]
-                # green_img_high = img[0:4, 66:69]
-                
-                # red_img_low = img[49:52, 180:183]
-                # red_img_high = img[0:4, 190:193]
-                
-                # yellow_img_low = img[49:52, 307:310]
-                # yellow_img_high = img[0:4, 308:311]
-                
-                # blueImg = img[0:5, 381:385]
-                # orangeImg = img[0:5, 481:485]
-                # ########### 
-        # #       Coordinates go in this fashion for openCV.
-        # #               img[y1:y2, x1:x2]
-        # ###########
-        # #47,49   50,52
-        # green_background_low = img[49:52, 47:50]
-        # #66,0 69,4
-        # green_background_high = img[0:4, 66:69]
-        # #180,49 183,52
-        # red_background_low = img[49:52, 180:183]
-        # #190,0 193,4
-        # red_background_high = img[0:4, 190:193]
-        # #307,49 310,52
-        # yellow_background_low = img[49:52, 307:310]
-        # #308,0 311,4
-        # yellow_background_high = img[0:4, 308:311]
+with Listener(on_press=on_press) as listener:
+    listener.join()
