@@ -38,11 +38,12 @@ class PlayRedux(threading.Thread):
         self.img_check = camera.grab(self.capture_area)
     
     def set_area(self):
-        # TODO: Update capture points inside the image. Could lead to better results. 
-        self.green_check = self.img_check[109:113, 77:81]
-        self.red_check = self.img_check[111:114, 224:227]
-        self.yellow_check = self.img_check[103:106, 224:227]
-        self.blue_check = self.img_check[115:118, 515:518]
+        # TODO: Update capture points inside the image. Could lead to better results.
+        if (self.img_check is not None):
+            self.green_check = self.img_check[109:113, 77:81]
+            self.red_check = self.img_check[111:114, 224:227]
+            self.yellow_check = self.img_check[103:106, 224:227]
+            self.blue_check = self.img_check[115:118, 515:518]
 
     def background_subtraction(self):
         self.green_diff = cv2.subtract(np.asarray(self.green_check), np.asarray(self.green_bg)) + cv2.subtract(np.asarray(self.green_bg), np.asarray(self.green_check))
@@ -74,12 +75,11 @@ class PlayRedux(threading.Thread):
         self.set_area()
         while self.program_running:
             while self.running:
-                print(self.img_check)
+                self.capture()
                 if (self.img_check is None):
                     continue
                 else:
                     start = current_time()
-                    self.capture()
                     self.set_area()
                     self.background_subtraction()
                     print(current_time() - start)
