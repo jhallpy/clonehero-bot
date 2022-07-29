@@ -37,6 +37,10 @@ class PlayRedux(threading.Thread):
     def capture(self):
         self.img_check = camera.grab(self.capture_area)
     
+    def save_image(self):
+        self.capture()
+        cv2.imwrite('test_img.png', self.img_check)
+        
     def set_area(self):
         # TODO: Update capture points inside the image. Could lead to better results.
         if (self.img_check is not None):
@@ -44,7 +48,14 @@ class PlayRedux(threading.Thread):
             self.red_check = self.img_check[111:114, 224:227]
             self.yellow_check = self.img_check[103:106, 224:227]
             self.blue_check = self.img_check[115:118, 515:518]
-
+            
+    def set_background(self):
+        self.capture()
+        self.green_bg = self.img_check[109:113, 77:81]
+        self.red_bg = self.img_check[111:114, 224:227]
+        self.yellow_bg = self.img_check[103:106, 224:227]
+        self.blue_bg = self.img_check[115:118, 515:518]
+        
     def background_subtraction(self):
         self.green_diff = cv2.subtract(np.asarray(self.green_check), np.asarray(self.green_bg)) + cv2.subtract(np.asarray(self.green_bg), np.asarray(self.green_check))
         self.green_diff[abs(self.green_diff) < 20.0] = 0
@@ -57,6 +68,7 @@ class PlayRedux(threading.Thread):
         
         self.blue_diff = cv2.subtract(np.asarray(self.blue_check), np.asarray(self.blue_bg)) + cv2.subtract(np.asarray(self.blue_bg), np.asarray(self.blue_check))
         self.blue_diff[abs(self.blue_diff) < 20.0] = 0
+    
     
     # def strum(input):
     #     return True
@@ -76,14 +88,32 @@ class PlayRedux(threading.Thread):
         while self.program_running:
             while self.running:
                 self.capture()
+                self.notes = []
                 if (self.img_check is None):
                     continue
                 else:
                     start = current_time()
                     self.set_area()
                     self.background_subtraction()
-                    print(current_time() - start)
-                
+                    # if(np.sum(self.green_diff) > 2500):
+                    #     print(np.sum(self.green_diff))
+                    #     key_press.press('a')
+                    #     key_press.tap(Key.down)
+                    #     key_press.release('a')
+                    #     print(current_time() - start)
+                    if(np.sum(self.red_diff) > 1500):
+                        print(np.sum(self.red_diff))
+                        key_press.press('s')
+                        key_press.tap(Key.down)
+                        key_press.release('s')
+                        print(current_time() - start)
+                    # if(np.sum(self.yellow_diff) > 0):
+                    #     print(np.sum(self.yellow_diff))
+                    #     key_press.press('d')
+                    #     key_press.tap(Key.down)
+                    #     key_press.release('d')
+                    #     print(current_time() - start)
+                    # print(current_time() - start)
             time.sleep(0.01)
                 # notes = []
                 # if(np.sum(self.green_diff)<=250 and np.sum(self.red_diff)<=200):
@@ -123,8 +153,10 @@ def on_press(key):
         if play_thread.running:
             play_thread.stop_playing()
         else:
+            play_thread.set_background()
             play_thread.start_playing()
     elif key == stop_key:
+        play_thread.save_image()
         play_thread.exit()
         listener.stop()
 
