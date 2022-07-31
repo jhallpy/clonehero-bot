@@ -197,16 +197,13 @@ def on_press(key):
         # cv2.imwrite('test_image.png', np.array(ImageGrab.grab(bbox=capture_area)))
         y = 0
         for x in play_thread.images:
-            # self.green_check = self.img_check[109:113, 77:81]
-            # self.red_check = self.img_check[111:114, 224:227]
-            # self.yellow_check = self.img_check[109:112, 370:373]
-            # self.blue_check = self.img_check[115:118, 515:518]
-            cv2.rectangle(np.array(x), (76, 108), (82,114), (255,0,0), 1)
-            cv2.rectangle(np.array(x), (223, 110), (228,115), (255,0,0), 1)
-            cv2.rectangle(np.array(x), (369, 108), (374,113), (255,0,0), 1)
-            cv2.rectangle(np.array(x), (514, 114), (519,119), (255,0,0), 1)
-            # cv2.rectangle(np.array(x), (76, 108), (82,114), (255,0,0), 1)
-            cv2.imwrite('screenshot_img_{}.png'.format(y), np.array(x))
+            
+            cv2.rectangle(x, (76, 108), (82,114), (255,0,0), 1)
+            cv2.rectangle(x, (223, 110), (228,115), (0,255,0), 1)
+            cv2.rectangle(x, (369, 108), (374,113), (255,0,0), 1)
+            cv2.rectangle(x, (516, 108), (521,124), (255,0,0), 1)
+            # cv2.rectangle(x, (76, 108), (82,114), (255,0,0), 1)
+            cv2.imwrite('screenshot_img_{}.png'.format(y), cv2.cvtColor(x, cv2.COLOR_RGB2BGR))
             y+=1
         play_thread.save_background()
         play_thread.release_all()
