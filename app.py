@@ -51,10 +51,10 @@ class PlayRedux(threading.Thread):
             self.yellow_check = self.img_check[109:113, 370:374]
             self.blue_check = self.img_check[109:113, 515:519]
         
-            self.green_arrow = self.img_check
-            self.red_arrow = self.img_check
-            self.yellow_arrow = self.img_check
-            self.blue_arrow = self.img_check
+            self.green_ar_chk = self.img_check[83:87, 30:34]
+            self.red_ar_chk = self.img_check[83:87, 168:172]
+            self.yellow_ar_chk = self.img_check[83:87, 308:312]
+            self.blue_ar_chk = self.img_check[83:87, 444:448]
             
     def set_background(self):
         self.capture()
@@ -63,10 +63,10 @@ class PlayRedux(threading.Thread):
         self.yellow_bg = self.img_check[109:113, 370:374]
         self.blue_bg = self.img_check[109:113, 515:519]
         
-        self.green_arrow = self.img_check
-        self.red_arrow = self.img_check
-        self.yellow_arrow = self.img_check
-        self.blue_arrow = self.img_check
+        self.green_ar = self.img_check[83:87, 30:34]
+        self.red_ar = self.img_check[83:87, 168:172]
+        self.yellow_ar = self.img_check[83:87, 308:312]
+        self.blue_ar = self.img_check[83:87, 444:448]
     
     def set_times(self):
         self.green_strum = current_time()
@@ -88,6 +88,19 @@ class PlayRedux(threading.Thread):
         self.blue_diff = cv2.subtract(np.asarray(self.blue_check), np.asarray(self.blue_bg)) + cv2.subtract(np.asarray(self.blue_bg), np.asarray(self.blue_check))
         self.blue_diff[abs(self.blue_diff) < 20.0] = 0
         
+        # Orange at some point.
+        
+        self.green_diff_two = cv2.subtract(np.asarray(self.green_ar_chk), np.asarray(self.green_ar)) + cv2.subtract(np.asarray(self.green_ar), np.asarray(self.green_ar_chk))
+        self.green_diff[abs(self.green_diff) < 20.0] = 0
+        
+        self.red_diff_two = cv2.subtract(np.asarray(self.red_ar_chk), np.asarray(self.red_ar)) + cv2.subtract(np.asarray(self.red_ar), np.asarray(self.red_ar_chk))
+        self.red_diff[abs(self.red_diff) < 20.0] = 0
+        
+        self.yellow_diff_two = cv2.subtract(np.asarray(self.yellow_ar_chk), np.asarray(self.yellow_ar)) + cv2.subtract(np.asarray(self.yellow_ar), np.asarray(self.yellow_ar_chk))
+        self.yellow_diff[abs(self.yellow_diff) < 20.0] = 0
+        
+        self.blue_diff_two = cv2.subtract(np.asarray(self.blue_ar_chk), np.asarray(self.blue_ar)) + cv2.subtract(np.asarray(self.blue_ar), np.asarray(self.blue_ar_chk))
+        self.blue_diff[abs(self.blue_diff) < 20.0] = 0
            
     
     def save_background(self):
@@ -114,6 +127,24 @@ class PlayRedux(threading.Thread):
         key_press.release('f')
         key_press.release('g')
         
+    # TODO: Too tired to think this function through right now
+    # def check_second_background(self):
+    #     if(np.sum(self.red_diff_two) > 0 or np.sum(self.yellow_diff_two) > 0 or np.sum(self.blue_diff_two) > 0):
+    #         if(np.sum(self.red_diff_two)>0):
+    #             print(str(np.sum(self.red_diff_two)) +" secondary red")
+    #             self.notes.append('s')
+    #             self.red_strum = current_time()
+    #         if(np.sum(self.yellow_diff_two)>0):
+    #             print(str(np.sum(self.red_diff_two)) +" secondary red")
+    #             self.notes.append('s')
+    #             self.red_strum = current_time()
+    #         if(np.sum(self.blue_diff_two)>0):
+    #             print(str(np.sum(self.red_diff_two)) +" secondary red")
+    #             self.notes.append('s')
+    #             self.red_strum = current_time()
+    #         # if(np.sum()>0):
+    #         #     print()    
+
     def run(self):
         i = 0
         self.capture()
@@ -131,10 +162,27 @@ class PlayRedux(threading.Thread):
                     self.set_area()
                     self.background_subtraction()
                     if(np.sum(self.green_diff) > 200 and current_time() - self.green_strum > 25):
+                        self.notes.append('a')
                         self.save_image()
                         self.green_strum = current_time()
-                        self.notes.append('a')
                         print(current_time() - start)
+                        if(np.sum(self.red_diff_two) > 0 or np.sum(self.yellow_diff_two) > 0 or np.sum(self.blue_diff_two) > 0):
+                            if(np.sum(self.red_diff_two)>0):
+                                print(str(np.sum(self.red_diff_two)) +" secondary red")
+                                self.notes.append('s')
+                                self.red_strum = current_time()
+                            if(np.sum(self.yellow_diff_two)>0):
+                                print(str(np.sum(self.yellow_diff_two)) +" secondary yellow")
+                                self.notes.append('d')
+                                self.red_strum = current_time()
+                            if(np.sum(self.blue_diff_two)>0):
+                                print(str(np.sum(self.blue_diff_two)) +" secondary blue")
+                                self.notes.append('f')
+                                self.red_strum = current_time()
+                            # if(np.sum()>0):
+                            #     print()    
+                            
+                            
                     if(np.sum(self.red_diff) > 0 and current_time() - self.red_strum > 25):
                         # print(str(current_time() - self.red_strum) +" STRUMMED TIME")
                         self.red_strum = current_time()
@@ -182,8 +230,8 @@ class PlayRedux(threading.Thread):
                 #         strum(notes)
 
 play_thread = PlayRedux()
-play_thread.start()
-
+play_thread.start()   
+    
 def current_time():
     return int(round(time.time() * 1000))
   
@@ -203,10 +251,6 @@ def on_press(key):
         y = 0
         # print(play_thread.images)
         for x in play_thread.images:
-            # self.green_bg = img_bg[109:113, 77:81]
-            # self.red_bg = img_bg[109:113, 224:228]
-            # self.yellow_bg = img_bg[109:113, 370:374]
-            # self.blue_bg = img_bg[109:113, 515:519]
             cv2.rectangle(x['image'], (76, 108), (82,114), (255,0,0), 1)
             cv2.rectangle(x['image'], (223, 108), (229,114), (0,255,0), 1)
             cv2.rectangle(x['image'], (369, 108), (375,114), (255,0,0), 1)
@@ -218,5 +262,12 @@ def on_press(key):
         play_thread.release_all()
         play_thread.exit()
         listener.stop()
-with Listener(on_press=on_press) as listener:
+        
+with Listener(on_press=on_press) as listener: 
     listener.join()
+ 
+# def main():
+    
+    
+# if __name__ == "main":
+#     main()
