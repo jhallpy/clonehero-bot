@@ -113,7 +113,7 @@ class PlayRedux(threading.Thread):
             # print(str(np.sum(self.green_bg)) + " GREEN bg")
     
     def save_image(self):
-        self.images.append({"image": self.img_check, "green": self.green_diff, "red": self.red_diff})
+        self.images.append({"image": self.img_check, "green": self.green_diff, "red": self.red_diff, "yellow": self.yellow_diff, "blue": self.blue_diff})
             
     def strum(self):
         for x in self.notes:
@@ -130,15 +130,15 @@ class PlayRedux(threading.Thread):
     # TODO: Too tired to think this function through right now
     # def check_second_background(self):
     #     if(np.sum(self.red_diff_two) > 0 or np.sum(self.yellow_diff_two) > 0 or np.sum(self.blue_diff_two) > 0):
-    #         if(np.sum(self.red_diff_two)>0):
+    #         if(np.sum(self.red_diff_two)>100):
     #             print(str(np.sum(self.red_diff_two)) +" secondary red")
     #             self.notes.append('s')
     #             self.red_strum = current_time()
-    #         if(np.sum(self.yellow_diff_two)>0):
+    #         if(np.sum(self.yellow_diff_two)>100):
     #             print(str(np.sum(self.red_diff_two)) +" secondary red")
     #             self.notes.append('s')
     #             self.red_strum = current_time()
-    #         if(np.sum(self.blue_diff_two)>0):
+    #         if(np.sum(self.blue_diff_two)>100):
     #             print(str(np.sum(self.red_diff_two)) +" secondary red")
     #             self.notes.append('s')
     #             self.red_strum = current_time()
@@ -146,7 +146,7 @@ class PlayRedux(threading.Thread):
     #         #     print()    
 
     def run(self):
-        i = 0
+        i = 1
         self.capture()
         self.set_area()
         self.set_times()
@@ -161,46 +161,108 @@ class PlayRedux(threading.Thread):
                     start = current_time()
                     self.set_area()
                     self.background_subtraction()
-                    if(np.sum(self.green_diff) > 200 and current_time() - self.green_strum > 25):
+                    if(np.sum(self.green_diff) > 200 and np.sum(self.green_diff_two) > 100 and current_time() - self.green_strum > 26):
+                        # print(str(current_time() - self.green_strum) + " green strum")
                         self.notes.append('a')
-                        self.save_image()
                         self.green_strum = current_time()
-                        print(current_time() - start)
+                        # print(current_time() - start)
                         if(np.sum(self.red_diff_two) > 0 or np.sum(self.yellow_diff_two) > 0 or np.sum(self.blue_diff_two) > 0):
-                            if(np.sum(self.red_diff_two)>0):
-                                print(str(np.sum(self.red_diff_two)) +" secondary red")
+                            if(np.sum(self.red_diff_two)>100):
+                                # print(str(np.sum(self.red_diff_two)) +" secondary red")
+                                self.red_strum = current_time()
                                 self.notes.append('s')
                                 self.red_strum = current_time()
-                            if(np.sum(self.yellow_diff_two)>0):
-                                print(str(np.sum(self.yellow_diff_two)) +" secondary yellow")
+                            if(np.sum(self.yellow_diff_two)>100):
+                                # print(str(np.sum(self.yellow_diff_two)) +" secondary yellow")
+                                self.yellow_strum = current_time()
                                 self.notes.append('d')
                                 self.red_strum = current_time()
-                            if(np.sum(self.blue_diff_two)>0):
-                                print(str(np.sum(self.blue_diff_two)) +" secondary blue")
+                            if(np.sum(self.blue_diff_two)>100):
+                                # print(str(np.sum(self.blue_diff_two)) +" secondary blue")
+                                self.blue_strum = current_time()
                                 self.notes.append('f')
                                 self.red_strum = current_time()
                             # if(np.sum()>0):
                             #     print()    
                             
-                            
-                    if(np.sum(self.red_diff) > 0 and current_time() - self.red_strum > 25):
-                        # print(str(current_time() - self.red_strum) +" STRUMMED TIME")
+                    elif(np.sum(self.red_diff) > 0 and np.sum(self.red_diff_two) > 100 and current_time() - self.red_strum > 26):
+                        # print(str(current_time() - self.red_strum) +" red strum")
                         self.red_strum = current_time()
-                        # print(str(np.sum(self.red_diff)) + " STRUM")
                         self.notes.append('s')
+                        if(np.sum(self.green_diff_two) > 0 or np.sum(self.yellow_diff_two) > 0 or np.sum(self.blue_diff_two) > 0):
+                            if(np.sum(self.green_diff_two)>100):
+                                # print(str(np.sum(self.green_diff_two)) +" secondary green")
+                                self.green_strum = current_time()
+                                self.notes.append('a')
+                                self.red_strum = current_time()
+                            if(np.sum(self.yellow_diff_two)>100):
+                                # print(str(np.sum(self.yellow_diff_two)) +" secondary yellow")
+                                self.yellow_strum = current_time()
+                                self.notes.append('d')
+                                self.red_strum = current_time()
+                            if(np.sum(self.blue_diff_two)>100):
+                                # print(str(np.sum(self.blue_diff_two)) +" secondary blue")
+                                self.blue_strum = current_time()
+                                self.notes.append('f')
+                                self.red_strum = current_time()
+                            # if(np.sum()>0):
+                            #     print()
                         # print(current_time() - start)
                         
-                    # if(np.sum(self.yellow_diff) > 0):
-                    #     print(np.sum(self.yellow_diff))
-                    #     key_press.press('d')
-                    #     key_press.tap(Key.down)
-                    #     key_press.release('d')
-                    #     print(current_time() - start)
-                    # print(current_time() - start)
-                    
+                    elif(np.sum(self.yellow_diff) > 0 and np.sum(self.yellow_diff_two) > 100 and current_time() - self.yellow_strum > 26):
+                        # print(str(current_time() - self.yellow_strum) + " yellow strum")
+                        self.yellow_strum = current_time()
+                        self.notes.append('d')
+                        if(np.sum(self.green_diff_two) > 0 or np.sum(self.yellow_diff_two) > 0 or np.sum(self.blue_diff_two) > 0):
+                            if(np.sum(self.green_diff_two)>100):
+                                # print(str(np.sum(self.green_diff_two)) +" secondary green")
+                                self.green_strum = current_time()
+                                self.notes.append('a')
+                                self.red_strum = current_time()
+                            if(np.sum(self.red_diff_two)>100):
+                                # print(str(np.sum(self.red_diff_two)) +" secondary red")
+                                self.red_strum = current_time()
+                                self.notes.append('s')
+                                self.red_strum = current_time()
+                            if(np.sum(self.blue_diff_two)>100):
+                                # print(str(np.sum(self.blue_diff_two)) +" secondary blue")
+                                self.blue_strum = current_time()
+                                self.notes.append('f')
+                                self.red_strum = current_time()
+                            # if(np.sum()>0):
+                            #     print()
+                        # print(current_time() - start)   
+                    elif(np.sum(self.blue_diff) > 50 and np.sum(self.blue_diff_two) > 100 and current_time() - self.blue_strum > 26):
+                        # print(str(current_time() - self.blue_strum) + " blue strum")
+                        self.blue_strum = current_time()
+                        self.notes.append('f')
+                        if(np.sum(self.green_diff_two) > 0 or np.sum(self.yellow_diff_two) > 0 or np.sum(self.red_diff_two) > 0):
+                            if(np.sum(self.green_diff_two)>100):
+                                # print(str(np.sum(self.green_diff_two)) +" secondary green")
+                                self.green_strum = current_time()
+                                self.notes.append('a')
+                                self.red_strum = current_time()
+                            if(np.sum(self.red_diff_two)>100):
+                                # print(str(np.sum(self.red_diff_two)) +" secondary red")
+                                self.red_strum = current_time()
+                                self.notes.append('s')
+                                self.red_strum = current_time()
+                            if(np.sum(self.yellow_diff_two)>100):
+                                # print(str(np.sum(self.yellow_diff_two)) +" secondary yellow")
+                                self.yellow_strum = current_time()
+                                self.notes.append('d')
+                                self.red_strum = current_time()
+                            # if(np.sum()>0):
+                            #     print()
+                        # print(current_time() - start)   
                     if (len(self.notes) > 0):
+                        print(self.notes)
+                        print(str(i)+ " STRUM LINE \n ___________________________")
+                        i+=1
                         self.release_all()
                         self.strum()
+                        # self.save_image()
+                        print(current_time() - start)
             time.sleep(0.01) 
                 # notes = []
                 # if(np.sum(self.green_diff)<=250 and np.sum(self.red_diff)<=200):
@@ -248,7 +310,7 @@ def on_press(key):
         play_thread.save_image()
     elif key == stop_key:
         cv2.imwrite('test_image.png', cv2.cvtColor(np.asarray(ImageGrab.grab(bbox=capture_area)), cv2.COLOR_RGB2BGR))
-        y = 0
+        y = 1
         # print(play_thread.images)
         for x in play_thread.images:
             cv2.rectangle(x['image'], (76, 108), (82,114), (255,0,0), 1)
@@ -256,9 +318,9 @@ def on_press(key):
             cv2.rectangle(x['image'], (369, 108), (375,114), (255,0,0), 1)
             cv2.rectangle(x['image'], (514, 108), (520,114), (255,0,0), 1)
             # cv2.rectangle(x, (76, 108), (82,114), (255,0,0), 1)
-            cv2.imwrite('g{}_r{}_img_{}.png'.format(np.sum(x['green']),np.sum(x['red']),y), cv2.cvtColor(x['image'], cv2.COLOR_RGB2BGR))
+            cv2.imwrite('img_{}_g{}_r{}_y{}_b{}.png'.format(y,np.sum(x['green']),np.sum(x['red']),np.sum(x['yellow']),np.sum(x['blue'])), cv2.cvtColor(x['image'], cv2.COLOR_RGB2BGR))
             y+=1
-        play_thread.save_background()
+        # play_thread.save_background()
         play_thread.release_all()
         play_thread.exit()
         listener.stop()
