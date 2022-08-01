@@ -1,3 +1,4 @@
+from cv2 import COLOR_RGB2BGR
 import numpy as np
 import time
 from pynput.keyboard import Key, Controller, Listener, KeyCode
@@ -21,11 +22,6 @@ class PlayRedux(threading.Thread):
         self.program_running = True
         self.capture_area = capture_area
         self.screenshot = screenshot
-        img_bg = camera.grab(self.capture_area)
-        self.green_bg = img_bg[109:113, 77:81]
-        self.red_bg = img_bg[111:114, 224:227]
-        self.yellow_bg = img_bg[109:112, 370:373]
-        self.blue_bg = img_bg[115:118, 515:518]
         self.images = []
         
     def start_playing(self):
@@ -48,19 +44,29 @@ class PlayRedux(threading.Thread):
         self.screenshot += 1
         
     def set_area(self):
-        # TODO: Update capture points inside the image. Could lead to better results.
+        # dxcam will return None if the image it takes would be the exact same image as the previous image. Therefore, this check is necessary.
         if (self.img_check is not None):
             self.green_check = self.img_check[109:113, 77:81]
-            self.red_check = self.img_check[111:114, 224:227]
-            self.yellow_check = self.img_check[109:112, 370:373]
-            self.blue_check = self.img_check[115:118, 515:518]
+            self.red_check = self.img_check[109:113, 224:228]
+            self.yellow_check = self.img_check[109:113, 370:374]
+            self.blue_check = self.img_check[109:113, 515:519]
+        
+            self.green_arrow = self.img_check
+            self.red_arrow = self.img_check
+            self.yellow_arrow = self.img_check
+            self.blue_arrow = self.img_check
             
     def set_background(self):
         self.capture()
         self.green_bg = self.img_check[109:113, 77:81]
-        self.red_bg = self.img_check[111:114, 224:227]
-        self.yellow_bg = self.img_check[109:112, 370:373]
-        self.blue_bg = self.img_check[115:118, 515:518]
+        self.red_bg = self.img_check[109:113, 224:228]
+        self.yellow_bg = self.img_check[109:113, 370:374]
+        self.blue_bg = self.img_check[109:113, 515:519]
+        
+        self.green_arrow = self.img_check
+        self.red_arrow = self.img_check
+        self.yellow_arrow = self.img_check
+        self.blue_arrow = self.img_check
     
     def set_times(self):
         self.green_strum = current_time()
@@ -81,6 +87,8 @@ class PlayRedux(threading.Thread):
         
         self.blue_diff = cv2.subtract(np.asarray(self.blue_check), np.asarray(self.blue_bg)) + cv2.subtract(np.asarray(self.blue_bg), np.asarray(self.blue_check))
         self.blue_diff[abs(self.blue_diff) < 20.0] = 0
+        
+           
     
     def save_background(self):
         # hasattr makes sure this function does not throw an exception on program exit, otherwise the thread stays open.
@@ -92,7 +100,7 @@ class PlayRedux(threading.Thread):
             # print(str(np.sum(self.green_bg)) + " GREEN bg")
     
     def save_image(self):
-        self.images.append(self.img_check)
+        self.images.append({"image": self.img_check, "green": self.green_diff, "red": self.red_diff})
             
     def strum(self):
         for x in self.notes:
@@ -115,22 +123,19 @@ class PlayRedux(threading.Thread):
             while self.running:
                 self.capture()
                 self.notes = []
+                # dxcam will return None if the image it takes would be the exact same image as the previous image. Therefore, this check is necessary.
                 if (self.img_check is None):
                     continue
                 else:
                     start = current_time()
                     self.set_area()
                     self.background_subtraction()
-                    # if (np.sum(self.green_diff)>0):
-                    #     print(np.sum(self.green_diff))
                     if(np.sum(self.green_diff) > 200 and current_time() - self.green_strum > 25):
-                        # print(str(np.sum(self.green_diff)) + " STRUM")
-                        # print(str(current_time() - self.green_strum) +" STRUMMED TIME")
                         self.save_image()
                         self.green_strum = current_time()
                         self.notes.append('a')
                         print(current_time() - start)
-                    if(np.sum(self.red_diff) > 500 and current_time() - self.red_strum > 25):
+                    if(np.sum(self.red_diff) > 0 and current_time() - self.red_strum > 25):
                         # print(str(current_time() - self.red_strum) +" STRUMMED TIME")
                         self.red_strum = current_time()
                         # print(str(np.sum(self.red_diff)) + " STRUM")
@@ -194,21 +199,24 @@ def on_press(key):
     elif key == screenshot_key:
         play_thread.save_image()
     elif key == stop_key:
-        # cv2.imwrite('test_image.png', np.array(ImageGrab.grab(bbox=capture_area)))
+        cv2.imwrite('test_image.png', cv2.cvtColor(np.asarray(ImageGrab.grab(bbox=capture_area)), cv2.COLOR_RGB2BGR))
         y = 0
+        # print(play_thread.images)
         for x in play_thread.images:
-            
-            cv2.rectangle(x, (76, 108), (82,114), (255,0,0), 1)
-            cv2.rectangle(x, (223, 110), (228,115), (0,255,0), 1)
-            cv2.rectangle(x, (369, 108), (374,113), (255,0,0), 1)
-            cv2.rectangle(x, (516, 108), (521,124), (255,0,0), 1)
+            # self.green_bg = img_bg[109:113, 77:81]
+            # self.red_bg = img_bg[109:113, 224:228]
+            # self.yellow_bg = img_bg[109:113, 370:374]
+            # self.blue_bg = img_bg[109:113, 515:519]
+            cv2.rectangle(x['image'], (76, 108), (82,114), (255,0,0), 1)
+            cv2.rectangle(x['image'], (223, 108), (229,114), (0,255,0), 1)
+            cv2.rectangle(x['image'], (369, 108), (375,114), (255,0,0), 1)
+            cv2.rectangle(x['image'], (514, 108), (520,114), (255,0,0), 1)
             # cv2.rectangle(x, (76, 108), (82,114), (255,0,0), 1)
-            cv2.imwrite('screenshot_img_{}.png'.format(y), cv2.cvtColor(x, cv2.COLOR_RGB2BGR))
+            cv2.imwrite('g{}_r{}_img_{}.png'.format(np.sum(x['green']),np.sum(x['red']),y), cv2.cvtColor(x['image'], cv2.COLOR_RGB2BGR))
             y+=1
         play_thread.save_background()
         play_thread.release_all()
         play_thread.exit()
         listener.stop()
-
 with Listener(on_press=on_press) as listener:
     listener.join()
