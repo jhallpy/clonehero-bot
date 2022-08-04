@@ -48,46 +48,50 @@ class PlayRedux(threading.Thread):
         # dxcam will return None if the image it takes would be the exact same image as the previous image. Therefore, this check is necessary.
         if (self.img_check is not None):
             self.green_check = self.img_check[74:78, 74:78]
-            self.green_two = self.img_check[60:64, 74:78]
-            self.green_three = self.img_check[50:54, 66:70]
+            self.green_check_two = self.img_check[60:64, 74:78]
+            self.green_check_three = self.img_check[50:54, 66:70]
+            self.green_check_four = self.img_check[40:43, 50:53]
             
             self.red_check = self.img_check[74:78, 220:224]
-            self.red_two = self.img_check[60:64, 220:224]
-            self.red_three = self.img_check[50:54, 210:214]
+            self.red_check_two = self.img_check[60:64, 220:224]
+            self.red_check_three = self.img_check[50:54, 210:214]
+            self.red_check_four = self.img_check
             
             self.yellow_check = self.img_check[74:78, 355:359]
-            self.yellow_two = self.img_check[60:64, 355:359]
-            self.yellow_three = self.img_check[50:54, 352:356]
+            self.yellow_check_two = self.img_check[60:64, 355:359]
+            self.yellow_check_three = self.img_check[50:54, 352:356]
+            self.yelow_four = self.img_check[40:43, 308:311]
             
             self.blue_check = self.img_check[74:78, 500:504]
-            self.blue_two = self.img_check[60:64, 500:504]
-            self.blue_three = self.img_check[50:54, 450:454]
+            self.blue_check_two = self.img_check[60:64, 500:504]
+            self.blue_check_three = self.img_check[50:54, 450:454]
+            self.blue_check_four = self.img_check
             
             self.orange_check = self.img_check[74:78, 538:542]
-            self.orange_two = self.img_check[60:64, 538:542]
-            self.orange_three = self.img_check[50:54, 553:557]
+            self.orange_check_two = self.img_check[60:64, 538:542]
+            self.orange_check_three = self.img_check[50:54, 553:557]
             
     def set_background(self):
         self.capture()
         self.green_bg = self.img_check[74:78, 74:78]
-        self.green_ar = self.img_check[60:64, 74:78]
-        self.green_three_bg = self.img_check[50:54, 66:70]
+        self.green_bg_two = self.img_check[60:64, 74:78]
+        self.green_bg_three = self.img_check[50:54, 66:70]
             
         self.red_bg = self.img_check[74:78, 220:224]
-        self.red_ar = self.img_check[60:64, 220:224]
-        self.red_three_bg = self.img_check[50:54, 210:214]
+        self.red_bg_two = self.img_check[60:64, 220:224]
+        self.red_bg_three = self.img_check[50:54, 210:214]
         
         self.yellow_bg = self.img_check[74:78, 355:359]
-        self.yellow_ar = self.img_check[60:64, 355:359]
-        self.yellow_three_bg = self.img_check[50:54, 352:356]
+        self.yellow_bg_two = self.img_check[60:64, 355:359]
+        self.yellow_bg_three = self.img_check[50:54, 352:356]
         
         self.blue_bg = self.img_check[74:78, 500:504]
-        self.blue_ar = self.img_check[60:64, 500:504]
-        self.blue_three_bg = self.img_check[50:54, 450:454]
+        self.blue_bg_two = self.img_check[60:64, 500:504]
+        self.blue_bg_three = self.img_check[50:54, 450:454]
         
         self.orange_bg = self.img_check[74:78, 538:542]
-        self.orange_ar = self.img_check[60:64, 538:542]
-        self.orange_three_bg = self.img_check[50:54, 553:557]
+        self.orange_bg_two = self.img_check[60:64, 538:542]
+        self.orange_bg_three = self.img_check[50:54, 553:557]
         
         cv2.imwrite('background.png', cv2.cvtColor(self.img_check, cv2.COLOR_RGB2BGR))
         
@@ -101,24 +105,24 @@ class PlayRedux(threading.Thread):
     
     def background_subtraction(self):
         self.green_diff = cv2.subtract(np.asarray(self.green_check), np.asarray(self.green_bg)) + cv2.subtract(np.asarray(self.green_bg), np.asarray(self.green_check))
-        self.green_diff_two = cv2.subtract(np.asarray(self.green_two), np.asarray(self.green_ar)) + cv2.subtract(np.asarray(self.green_ar), np.asarray(self.green_two))
-        self.green_diff_three = cv2.subtract(np.asarray(self.green_three), np.asarray(self.green_three_bg)) + cv2.subtract(np.asarray(self.green_three_bg), np.asarray(self.green_three))
+        self.green_diff_two = cv2.subtract(np.asarray(self.green_check_two), np.asarray(self.green_bg_two)) + cv2.subtract(np.asarray(self.green_bg_two), np.asarray(self.green_check_two))
+        self.green_diff_three = cv2.subtract(np.asarray(self.green_check_three), np.asarray(self.green_bg_three)) + cv2.subtract(np.asarray(self.green_bg_three), np.asarray(self.green_check_three))
         
         self.red_diff = cv2.subtract(np.asarray(self.red_check), np.asarray(self.red_bg)) + cv2.subtract(np.asarray(self.red_bg), np.asarray(self.red_check))
-        self.red_diff_two = cv2.subtract(np.asarray(self.red_two), np.asarray(self.red_ar)) + cv2.subtract(np.asarray(self.red_ar), np.asarray(self.red_two))
-        self.red_diff_three = cv2.subtract(np.asarray(self.red_three), np.asarray(self.red_three_bg)) + cv2.subtract(np.asarray(self.red_three_bg), np.asarray(self.red_three))
+        self.red_diff_two = cv2.subtract(np.asarray(self.red_check_two), np.asarray(self.red_bg_two)) + cv2.subtract(np.asarray(self.red_bg_two), np.asarray(self.red_check_two))
+        self.red_diff_three = cv2.subtract(np.asarray(self.red_check_three), np.asarray(self.red_bg_three)) + cv2.subtract(np.asarray(self.red_bg_three), np.asarray(self.red_check_three))
         
         self.yellow_diff = cv2.subtract(np.asarray(self.yellow_check), np.asarray(self.yellow_bg)) + cv2.subtract(np.asarray(self.yellow_bg), np.asarray(self.yellow_check))
-        self.yellow_diff_two = cv2.subtract(np.asarray(self.yellow_two), np.asarray(self.yellow_ar)) + cv2.subtract(np.asarray(self.yellow_ar), np.asarray(self.yellow_two))
-        self.yellow_diff_three = cv2.subtract(np.asarray(self.yellow_three), np.asarray(self.yellow_three_bg)) + cv2.subtract(np.asarray(self.yellow_three_bg), np.asarray(self.yellow_three))
+        self.yellow_diff_two = cv2.subtract(np.asarray(self.yellow_check_two), np.asarray(self.yellow_bg_two)) + cv2.subtract(np.asarray(self.yellow_bg_two), np.asarray(self.yellow_check_two))
+        self.yellow_diff_three = cv2.subtract(np.asarray(self.yellow_check_three), np.asarray(self.yellow_bg_three)) + cv2.subtract(np.asarray(self.yellow_bg_three), np.asarray(self.yellow_check_three))
         
         self.blue_diff = cv2.subtract(np.asarray(self.blue_check), np.asarray(self.blue_bg)) + cv2.subtract(np.asarray(self.blue_bg), np.asarray(self.blue_check))
-        self.blue_diff_two = cv2.subtract(np.asarray(self.blue_two), np.asarray(self.blue_ar)) + cv2.subtract(np.asarray(self.blue_ar), np.asarray(self.blue_two))
-        self.blue_diff_three = cv2.subtract(np.asarray(self.blue_three), np.asarray(self.blue_three_bg)) + cv2.subtract(np.asarray(self.blue_three_bg), np.asarray(self.blue_three))
+        self.blue_diff_two = cv2.subtract(np.asarray(self.blue_check_two), np.asarray(self.blue_bg_two)) + cv2.subtract(np.asarray(self.blue_bg_two), np.asarray(self.blue_check_two))
+        self.blue_diff_three = cv2.subtract(np.asarray(self.blue_check_three), np.asarray(self.blue_bg_three)) + cv2.subtract(np.asarray(self.blue_bg_three), np.asarray(self.blue_check_three))
         
         self.orange_diff = cv2.subtract(np.asarray(self.orange_check), np.asarray(self.orange_bg)) + cv2.subtract(np.asarray(self.orange_bg), np.asarray(self.orange_check))
-        self.orange_diff_two = cv2.subtract(np.asarray(self.orange_two), np.asarray(self.orange_ar)) + cv2.subtract(np.asarray(self.orange_ar), np.asarray(self.orange_two))
-        self.orange_diff_three = cv2.subtract(np.asarray(self.orange_three), np.asarray(self.orange_three_bg)) + cv2.subtract(np.asarray(self.orange_three_bg), np.asarray(self.orange_three))
+        self.orange_diff_two = cv2.subtract(np.asarray(self.orange_check_two), np.asarray(self.orange_bg_two)) + cv2.subtract(np.asarray(self.orange_bg_two), np.asarray(self.orange_check_two))
+        self.orange_diff_three = cv2.subtract(np.asarray(self.orange_check_three), np.asarray(self.orange_bg_three)) + cv2.subtract(np.asarray(self.orange_bg_three), np.asarray(self.orange_check_three))
         
     def save_image(self):
         self.images.append({"image": self.img_check, "green": self.green_diff, "red": self.red_diff, "yellow": self.yellow_diff, "blue": self.blue_diff, "orange": self.orange_diff})
@@ -163,15 +167,15 @@ class PlayRedux(threading.Thread):
                     if(np.sum(self.green_diff) > 750 and np.sum(self.green_diff_two) > 750 and np.sum(self.green_diff_three) > 200 and current_time() - self.green_strum > 25):   
                         self.green_strum = current_time()
                         self.notes.append('a')
-                        if(np.sum(self.red_diff) > 300 and np.sum(self.red_diff_two) > 300 and np.sum(self.red_diff_three) > 200 and current_time() - self.red_strum >25):
+                        if(np.sum(self.red_diff) > 200 and np.sum(self.red_diff_two) > 200 and np.sum(self.red_diff_three) > 200 and current_time() - self.red_strum >25):
                             # print(str(np.sum(self.red_diff_two)) +" secondary red")
                             self.red_strum = current_time()
                             self.notes.append('s')
-                        if(np.sum(self.yellow_diff) > 100 and np.sum(self.yellow_diff_two) > 200 and np.sum(self.yellow_diff_three) > 150 and current_time() - self.yellow_strum >25):
+                        if(np.sum(self.yellow_diff) > 100 and np.sum(self.yellow_diff_two) > 100 and np.sum(self.yellow_diff_three) > 150 and current_time() - self.yellow_strum >25):
                             # print(str(np.sum(self.yellow_diff_two)) +" secondary yellow")
                             self.yellow_strum = current_time()
                             self.notes.append('d')
-                        if(np.sum(self.blue_diff) > 200 and np.sum(self.blue_diff_two) > 300 and np.sum(self.blue_diff_three) > 200 and current_time() - self.blue_strum >25):
+                        if(np.sum(self.blue_diff_two) > 150 and np.sum(self.blue_diff_three) > 150 and current_time() - self.blue_strum >25):
                             # print(str(np.sum(self.blue_diff_two)) +" secondary blue")
                             self.blue_strum = current_time()
                             self.notes.append('f')
@@ -180,18 +184,18 @@ class PlayRedux(threading.Thread):
                             self.orange_strum = current_time()
                             self.notes.append('g')
                         # print(np.sum(self.green_check))
-                    elif(np.sum(self.red_diff) > 300 and np.sum(self.red_diff_two) > 300 and np.sum(self.red_diff_three) > 200 and current_time() - self.red_strum >25):
+                    elif(np.sum(self.red_diff) > 200 and np.sum(self.red_diff_two) > 200 and np.sum(self.red_diff_three) > 200 and current_time() - self.red_strum >25):
                         self.red_strum = current_time()
                         self.notes.append('s')
                         if(np.sum(self.green_diff) > 750 and np.sum(self.green_diff_two) > 750 and np.sum(self.green_diff_three) > 200 and current_time() - self.green_strum > 25):
                             # print(str(np.sum(self.green_diff_two)) +" secondary green")
                             self.green_strum = current_time()
                             self.notes.append('a')
-                        if(np.sum(self.yellow_diff) > 100 and np.sum(self.yellow_diff_two) > 200 and np.sum(self.yellow_diff_three) > 150 and current_time() - self.yellow_strum >25):
+                        if(np.sum(self.yellow_diff) > 100 and np.sum(self.yellow_diff_two) > 100 and np.sum(self.yellow_diff_three) > 150 and current_time() - self.yellow_strum >25):
                             # print(str(np.sum(self.yellow_diff_two)) +" secondary yellow")
                             self.yellow_strum = current_time()
                             self.notes.append('d')
-                        if(np.sum(self.blue_diff) > 200 and np.sum(self.blue_diff_two) > 300 and np.sum(self.blue_diff_three) > 200 and current_time() - self.blue_strum >25):
+                        if(np.sum(self.blue_diff_two) > 150 and np.sum(self.blue_diff_three) > 150 and current_time() - self.blue_strum >25):
                             # print(str(np.sum(self.blue_diff_two)) +" secondary blue")
                             self.blue_strum = current_time()
                             self.notes.append('f')
@@ -199,18 +203,18 @@ class PlayRedux(threading.Thread):
                             # print(str(np.sum(self.orange_diff_two)) +" secondary orange")
                             self.orange_strum = current_time()
                             self.notes.append('g')
-                    elif(np.sum(self.yellow_diff) > 100 and np.sum(self.yellow_diff_two) > 200 and np.sum(self.yellow_diff_three) > 150 and current_time() - self.yellow_strum >25):
+                    elif(np.sum(self.yellow_diff) > 100 and np.sum(self.yellow_diff_two) > 100 and np.sum(self.yellow_diff_three) > 150 and current_time() - self.yellow_strum >25):
                         self.yellow_strum = current_time()
                         self.notes.append('d')
                         if(np.sum(self.green_diff) > 750 and np.sum(self.green_diff_two) > 750 and np.sum(self.green_diff_three) > 200 and current_time() - self.green_strum > 25):
                             # print(str(np.sum(self.green_diff_two)) +" secondary green")
                             self.green_strum = current_time()
                             self.notes.append('a')
-                        if(np.sum(self.red_diff) > 300 and np.sum(self.red_diff_two) > 300 and np.sum(self.red_diff_three) > 200 and current_time() - self.red_strum >25):
+                        if(np.sum(self.red_diff) > 200 and np.sum(self.red_diff_two) > 200 and np.sum(self.red_diff_three) > 200 and current_time() - self.red_strum >25):
                             # print(str(np.sum(self.red_diff_two)) +" secondary red")
                             self.red_strum = current_time()
                             self.notes.append('s')
-                        if(np.sum(self.blue_diff) > 200 and np.sum(self.blue_diff_two) > 300 and np.sum(self.blue_diff_three) > 200 and current_time() - self.blue_strum >25):
+                        if(np.sum(self.blue_diff_two) > 150 and np.sum(self.blue_diff_three) > 150 and current_time() - self.blue_strum >25):
                             # print(str(np.sum(self.blue_diff_two)) +" secondary blue")
                             self.blue_strum = current_time()
                             self.notes.append('f')
@@ -218,7 +222,7 @@ class PlayRedux(threading.Thread):
                         #     print(str(np.sum(self.orange_diff_two)) +" secondary orange")
                         #     self.orange_strum = current_time()
                         #     self.notes.append('g')
-                    elif(np.sum(self.blue_diff) > 200 and np.sum(self.blue_diff_two) > 200 and np.sum(self.blue_diff_three) > 200 and current_time() - self.blue_strum >25):
+                    elif(np.sum(self.blue_diff) > 150 and np.sum(self.blue_diff_two) > 150 and np.sum(self.blue_diff_three) > 150 and current_time() - self.blue_strum >25):
                         # print(str(current_time() - self.blue_strum) +" blue strum")
                         self.blue_strum = current_time()
                         self.notes.append('f')
@@ -226,11 +230,11 @@ class PlayRedux(threading.Thread):
                             # print(str(np.sum(self.green_diff_two)) +" secondary green")
                             self.green_strum = current_time()
                             self.notes.append('a')
-                        if(np.sum(self.red_diff) > 300 and np.sum(self.red_diff_two) > 300 and np.sum(self.red_diff_three) > 200 and current_time() - self.red_strum >25):
+                        if(np.sum(self.red_diff) > 200 and np.sum(self.red_diff_two) > 200 and np.sum(self.red_diff_three) > 200 and current_time() - self.red_strum >25):
                             # print(str(np.sum(self.red_diff_two)) +" secondary red")
                             self.red_strum = current_time()
                             self.notes.append('s')
-                        if(np.sum(self.yellow_diff) > 100 and np.sum(self.yellow_diff_two) > 200 and np.sum(self.yellow_diff_three) > 150 and current_time() - self.yellow_strum >25):
+                        if(np.sum(self.yellow_diff) > 100 and np.sum(self.yellow_diff_two) > 100 and np.sum(self.yellow_diff_three) > 150 and current_time() - self.yellow_strum >25):
                             # print(str(np.sum(self.yellow_diff_two)) +" secondary yellow")
                             self.yellow_strum = current_time()
                             self.notes.append('d')
@@ -238,7 +242,7 @@ class PlayRedux(threading.Thread):
                         #     print(str(np.sum(self.orange_diff_two)) +" secondary orange")
                         #     self.orange_strum = current_time()
                         #     self.notes.append('g')
-                    # elif(np.sum(self.red_diff) > 300 and np.sum(self.red_diff_two) > 300 and np.sum(self.red_diff_three) > 200 and current_time() - self.red_strum >25):
+                    # elif(np.sum(self.red_diff) > 200 and np.sum(self.red_diff_two) > 200 and np.sum(self.red_diff_three) > 200 and current_time() - self.red_strum >25):
                     #     # print(str(current_time() - self.red_strum) +" red strum")
                     #     print(np.sum(self.red_diff))
                     #     print(np.sum(self.red_diff_two))
@@ -270,14 +274,14 @@ class PlayRedux(threading.Thread):
                     #         self.blue_strum = current_time()
                     #         self.notes.append('f')
                     #     # print(current_time() - start)   
-                    # self.save_test_image()
+                    self.save_test_image()
                     if (len(self.notes) > 0):
                         # print(self.notes)
                         # print(str(i)+ " STRUM LINE \n ___________________________")
                         # i+=1
                         self.release_all()
                         self.strum()
-                        self.save_test_image()
+                        # self.save_test_image()
                         # print(current_time() - start)
                     # self.save_image()
             time.sleep(0.01) 
@@ -305,24 +309,24 @@ def on_press(key):
         z = 1
         for x in play_thread.test_images:
             # self.green_check = self.img_check[74:78, 74:78]
-            # self.green_two = self.img_check[60:64, 74:78]
-            # self.green_three = self.img_check[56:59, 66:70]
+            # self.green_check_two = self.img_check[60:64, 74:78]
+            # self.green_check_three = self.img_check[56:59, 66:70]
             
             # self.red_check = self.img_check[74:78, 220:224]
-            # self.red_two = self.img_check[60:64, 220:224]
-            # self.red_three = self.img_check[56:59, 210:214]
+            # self.red_check_two = self.img_check[60:64, 220:224]
+            # self.red_check_three = self.img_check[56:59, 210:214]
             
             # self.yellow_bg = self.img_check[74:78, 355:359]
-            # self.yellow_ar = self.img_check[60:64, 355:359]
-            # self.yellow_three_bg = self.img_check[50:54, 324:328]
+            # self.yellow_bg_two = self.img_check[60:64, 355:359]
+            # self.yellow_bg_three = self.img_check[50:54, 324:328]
             
             # self.blue_check = self.img_check[74:78, 512:516]
-            # self.blue_two = self.img_check[60:64, 512:516]
-            # self.blue_three = self.img_check[56:59, 450:454]
+            # self.blue_check_two = self.img_check[60:64, 512:516]
+            # self.blue_check_three = self.img_check[56:59, 450:454]
             
             # self.orange_check = self.img_check[74:78, 538:542]
-            # self.orange_two = self.img_check[60:64, 538:542]
-            # self.orange_three = self.img_check[56:59, 553:557]
+            # self.orange_check_two = self.img_check[60:64, 538:542]
+            # self.orange_check_three = self.img_check[56:59, 553:557]
             cv2.rectangle(x['image'], (73, 73), (79,79), (255,0,0), 1)
             cv2.rectangle(x['image'], (73, 58), (79,64), (255,0,0), 1)
             cv2.rectangle(x['image'], (65,49), (71,55), (255,0,0), 1)
@@ -333,7 +337,7 @@ def on_press(key):
             
             cv2.rectangle(x['image'], (354, 73), (359,79), (255,0,0), 1)
             cv2.rectangle(x['image'], (354, 58), (359,64), (255,0,0), 1)
-            cv2.rectangle(x['image'], (351,49), (355,55), (255,0,0), 1)
+            cv2.rectangle(x['image'], (350,49), (356,55), (255,0,0), 1)
             
             cv2.rectangle(x['image'], (499, 73), (504,79), (255,0,0), 1)
             cv2.rectangle(x['image'], (499, 58), (504,64), (255,0,0), 1)
