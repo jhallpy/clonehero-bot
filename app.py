@@ -144,7 +144,7 @@ class PlayRedux(threading.Thread):
                                "yellow": self.ye_df, "second_yellow": self.ye_df_two, "third_yellow": self.ye_df_three, "fourth_yellow": self.ye_df_four,
                                "blue": self.bl_df, "second_blue": self.bl_df_two, "third_blue": self.bl_df_three, "fourth_blue": self.bl_df_four,
                                "orange": self.or_df, "second_orange": self.or_df_two, "third_orange": self.or_df_three, "fourth_orange": self.or_df_four,
-                               "played" : self.played
+                               "played" : self.played, "notes": self.notes
                                })
       
     def strum(self):
@@ -175,98 +175,118 @@ class PlayRedux(threading.Thread):
                 else:
                     self.set_area()
                     self.background_subtraction()
-                    # print(np.sum(self.bl_df_four))
-                    # if(np.sum(self.gn_df) > 750 and np.sum(self.gn_df_two) > 750 and np.sum(self.gn_df_three) > 200 and current_time() - self.green_strum > 25):   
-                    #     self.green_strum = current_time()
-                    #     self.notes.append('a')
-                    #     if(np.sum(self.r_df) > 200 and np.sum(self.r_df_two) > 200 and np.sum(self.r_df_three) > 200 and current_time() - self.red_strum >25):
-                    #         # print(str(np.sum(self.r_df_two)) +" secondary red")
-                    #         self.red_strum = current_time()
-                    #         self.notes.append('s')
-                    #     if(np.sum(self.yellow) > 100 and np.sum(self.ye_df_two) > 100 and np.sum(self.ye_df_three) > 150 and current_time() - self.yellow_strum >25):
-                    #         # print(str(np.sum(self.ye_df_two)) +" secondary yellow")
-                    #         self.yellow_strum = current_time()
-                    #         self.notes.append('d')
-                    #     if(np.sum(self.bl_df_two) > 150 and np.sum(self.bl_df_three) > 150 and current_time() - self.blue_strum >25):
-                    #         # print(str(np.sum(self.bl_df_two)) +" secondary blue")
-                    #         self.blue_strum = current_time()
-                    #         self.notes.append('f')
-                    #     if(np.sum(self.or_df_two)>100):
-                    #         # print(str(np.sum(self.or_df_two)) +" secondary orange")
-                    #         self.orange_strum = current_time()
-                    #         self.notes.append('g')
-                        # print(np.sum(self.gn_chk))
-                    # elif(np.sum(self.r_df) > 200 and np.sum(self.r_df_two) > 200 and np.sum(self.r_df_three) > 200 and current_time() - self.red_strum >25):
-                    #     self.red_strum = current_time()
-                    #     self.notes.append('s')
-                    #     if(np.sum(self.gn_df) > 750 and np.sum(self.gn_df_two) > 750 and np.sum(self.gn_df_three) > 200 and current_time() - self.green_strum > 25):
-                    #         # print(str(np.sum(self.gn_df_two)) +" secondary green")
-                    #         self.green_strum = current_time()
-                    #         self.notes.append('a')
-                    #     if(np.sum(self.yellow) > 100 and np.sum(self.ye_df_two) > 100 and np.sum(self.ye_df_three) > 150 and current_time() - self.yellow_strum >25):
-                    #         # print(str(np.sum(self.ye_df_two)) +" secondary yellow")
-                    #         self.yellow_strum = current_time()
-                    #         self.notes.append('d')
-                    #     if(np.sum(self.bl_df_two) > 150 and np.sum(self.bl_df_three) > 150 and current_time() - self.blue_strum >25):
-                    #         # print(str(np.sum(self.bl_df_two)) +" secondary blue")
-                    #         self.blue_strum = current_time()
-                    #         self.notes.append('f')
-                    #     if(np.sum(self.or_df_two) > 100 and np.sum(self.or_df_three) > 100 ):
-                    #         # print(str(np.sum(self.or_df_two)) +" secondary orange")
-                    #         self.orange_strum = current_time()
-                    #         self.notes.append('g')
                     
-                    if(np.sum(self.ye_chk_four) != 3239 and np.sum(self.ye_df_four) > 1200 and current_time() - self.yellow_strum >25):
-                        self.save_test_image()
+                    # if(np.sum(self.gn_df_four) > 1200 and np.sum(self.gn_df_four) != 1910 and current_time() - self.red_strum >25):
+                    #     print(np.sum(self.gn_df_four))
+                    #     # self.save_test_image()
                     
-                    if(np.sum(self.ye_df) > 10 and np.sum(self.ye_df_two) > 100 and np.sum(self.ye_df_three) > 10 and np.sum(self.ye_chk_four) != 3239
-                        and np.sum(self.ye_df_four) > 1200 and current_time() - self.yellow_strum >25):
-                        self.played = True
-                        self.save_test_image()
-                        # self.save_test_image()
+                    if(np.sum(self.gn_df) > 20 and np.sum(self.gn_df_two) > 1200 and np.sum(self.gn_df_three) > 20 
+                       and np.sum(self.gn_df_four) != 1910 and np.sum(self.gn_df_four) > 1200
+                       and current_time() - self.green_strum > 38):  
+                        self.green_strum = current_time()
+                        self.notes.append('a')
                         
-                        self.yellow_strum = current_time()
-                        self.notes.append('d')
-                        if(np.sum(self.gn_df) > 750 and np.sum(self.gn_df_two) > 750 and np.sum(self.gn_df_three) > 200 and current_time() - self.green_strum > 25):
-                            # print(str(np.sum(self.gn_df_two)) +" secondary green")
-                            self.green_strum = current_time()
-                            self.notes.append('a')
-                        if(np.sum(self.r_df) > 200 and np.sum(self.r_df_two) > 200 and np.sum(self.r_df_three) > 200 and current_time() - self.red_strum >25):
+                        if(np.sum(self.r_df_two) > 150 and np.sum(self.r_df_three) > 10 and np.sum(self.r_df_four) > 1200 
+                           and np.sum(self.r_df_four) != 1955 and current_time() - self.red_strum > 38):
                             # print(str(np.sum(self.r_df_two)) +" secondary red")
                             self.red_strum = current_time()
                             self.notes.append('s')
-                        if(np.sum(self.bl_df_two) > 150 and np.sum(self.bl_df_three) > 150 and np.sum(self.bl_df_four) != 3318
-                         and np.sum(self.bl_df_four) > 1200 and current_time() - self.blue_strum >25):
-                            # print(str(np.sum(self.bl_df_two)) +" secondary blue")
-                            self.blue_strum = current_time()
-                            self.notes.append('f')
-                        # if(np.sum(self.or_df_two)>100):
-                        #     print(str(np.sum(self.or_df_two)) +" secondary orange")
-                        #     self.orange_strum = current_time()
-                        #     self.notes.append('g')
-                    elif(np.sum(self.bl_df) > 0 and np.sum(self.bl_df_two) > 150 and np.sum(self.bl_df_three) > 150 and np.sum(self.bl_df_four) != 3318
-                         and np.sum(self.bl_df_four) > 1200 and current_time() - self.blue_strum >25):
-                        self.played = True
-                        # print(str(current_time() - self.blue_strum) +" blue strum")
-                        self.blue_strum = current_time()
-                        self.notes.append('f')
-                        if(np.sum(self.gn_df) > 750 and np.sum(self.gn_df_two) > 750 and np.sum(self.gn_df_three) > 200 and current_time() - self.green_strum > 25):
-                            # print(str(np.sum(self.gn_df_two)) +" secondary green")
-                            self.green_strum = current_time()
-                            self.notes.append('a')
-                        if(np.sum(self.r_df) > 200 and np.sum(self.r_df_two) > 200 and np.sum(self.r_df_three) > 200 and current_time() - self.red_strum >25):
-                            # print(str(np.sum(self.r_df_two)) +" secondary red")
-                            self.red_strum = current_time()
-                            self.notes.append('s')
-                        if(np.sum(self.ye_df_two) > 100 and np.sum(self.ye_df_three) > 10 and np.sum(self.ye_chk_four) != 3239
-                        and np.sum(self.ye_df_four) > 1200 and current_time() - self.yellow_strum >25):
-                            # print(str(np.sum(self.ye_df_two)) +" secondary yellow")
+                            
+                        if(np.sum(self.ye_df_two) > 100 and np.sum(self.ye_df_three) > 10 and np.sum(self.ye_df_four) != 3239 
+                           and np.sum(self.ye_df_four) > 1200 and current_time() - self.yellow_strum > 38):
                             self.yellow_strum = current_time()
                             self.notes.append('d')
+                            
+                        if(np.sum(self.bl_df_two) > 100 and np.sum(self.bl_df_three) > 10 and np.sum(self.bl_df_four) != 3318
+                         and np.sum(self.bl_df_four) > 1200 and current_time() - self.blue_strum > 38):
+                            self.blue_strum = current_time()
+                            self.notes.append('f')
+                            
+                        # if(np.sum(self.or_df_two)>100):
+                        #     # print(str(np.sum(self.or_df_two)) +" secondary orange")
+                        #     self.orange_strum = current_time()
+                        #     self.notes.append('g')
+                    
+                    elif(np.sum(self.r_df) > 20 and np.sum(self.r_df_two) > 150 and np.sum(self.r_df_three) > 10 
+                       and np.sum(self.r_df_four) > 1200 and np.sum(self.r_df_four) != 1955
+                       and current_time() - self.red_strum > 38):
+                        # self.save_test_image()
+                        self.red_strum = current_time()
+                        self.notes.append('s')
+                        
+                        if(np.sum(self.gn_df) > 750 and np.sum(self.gn_df_two) > 750 and np.sum(self.gn_df_three) > 200 and current_time() - self.green_strum > 25):
+                            self.green_strum = current_time()
+                            self.notes.append('a')
+                            
+                        if(np.sum(self.ye_df_two) > 100 and np.sum(self.ye_df_three) > 10 and np.sum(self.ye_df_four) != 3239 
+                           and np.sum(self.ye_df_four) > 1200 and current_time() - self.yellow_strum > 38):
+                            self.yellow_strum = current_time()
+                            self.notes.append('d')
+                            
+                        if(np.sum(self.bl_df_two) > 100 and np.sum(self.bl_df_three) > 10 and np.sum(self.bl_df_four) != 3318
+                         and np.sum(self.bl_df_four) > 1200 and current_time() - self.blue_strum > 38):
+                            self.blue_strum = current_time()
+                            self.notes.append('f')
+                            
+                        # if(np.sum(self.or_df_two) > 100 and np.sum(self.or_df_three) > 100 ):
+                        #     # print(str(np.sum(self.or_df_two)) +" secondary orange")
+                        #     self.orange_strum = current_time()
+                        #     self.notes.append('g')
+                    
+                    elif(np.sum(self.ye_df) > 20 and np.sum(self.ye_df_two) > 100 and np.sum(self.ye_df_three) > 10 and np.sum(self.ye_df_four) != 3239 
+                       and np.sum(self.ye_df_four) > 1200 and current_time() - self.yellow_strum > 38):
+                        
+                        self.played = True
+                        # self.save_test_image()
+                        print(current_time() - self.yellow_strum)
+                        self.yellow_strum = current_time()
+                        self.notes.append('d')
+                        
+                        if(np.sum(self.gn_df) > 750 and np.sum(self.gn_df_two) > 750 and np.sum(self.gn_df_three) > 200 and current_time() - self.green_strum > 25):
+                            self.green_strum = current_time()
+                            self.notes.append('a')
+                            
+                        if(np.sum(self.r_df_two) > 150 and np.sum(self.r_df_three) > 10 and np.sum(self.r_df_four) > 1200 
+                           and np.sum(self.r_df_four) != 1955 and current_time() - self.red_strum > 38):
+                            self.red_strum = current_time()
+                            self.notes.append('s')
+                            
+                        if(np.sum(self.bl_df_two) > 100 and np.sum(self.bl_df_three) > 10 and np.sum(self.bl_df_four) != 3318
+                         and np.sum(self.bl_df_four) > 1200 and current_time() - self.blue_strum > 38):
+                            self.blue_strum = current_time()
+                            self.notes.append('f')
+                            
                         # if(np.sum(self.or_df_two)>100):
                         #     print(str(np.sum(self.or_df_two)) +" secondary orange")
                         #     self.orange_strum = current_time()
                         #     self.notes.append('g')
+                        
+                    elif(np.sum(self.bl_df) > 10 and np.sum(self.bl_df_two) > 100 and np.sum(self.bl_df_three) > 10 and np.sum(self.bl_df_four) != 3318
+                         and np.sum(self.bl_df_four) > 1200 and current_time() - self.blue_strum > 38):
+                        self.played = True
+                        self.blue_strum = current_time()
+                        self.notes.append('f')
+                        
+                        if(np.sum(self.gn_df) > 750 and np.sum(self.gn_df_two) > 750 and np.sum(self.gn_df_three) > 200 and current_time() - self.green_strum > 25):
+                            self.green_strum = current_time()
+                            self.notes.append('a')
+                            
+                        if(np.sum(self.r_df_two) > 150 and np.sum(self.r_df_three) > 10 and np.sum(self.r_df_four) > 1200 
+                           and np.sum(self.r_df_four) != 1955 and current_time() - self.red_strum > 38):
+                            # print(str(np.sum(self.r_df_two)) +" secondary red")
+                            self.red_strum = current_time()
+                            self.notes.append('s')
+                            
+                        if(np.sum(self.ye_df_two) > 100 and np.sum(self.ye_df_three) > 10 and np.sum(self.ye_df_four) != 3239 
+                           and np.sum(self.ye_df_four) > 1200 and current_time() - self.yellow_strum > 38):
+                            self.yellow_strum = current_time()
+                            self.notes.append('d')
+                            
+                        # if(np.sum(self.or_df_two)>100):
+                        #     print(str(np.sum(self.or_df_two)) +" secondary orange")
+                        #     self.orange_strum = current_time()
+                        #     self.notes.append('g')
+                        
                     # elif(np.sum(self.r_df) > 200 and np.sum(self.r_df_two) > 200 and np.sum(self.r_df_three) > 200 and current_time() - self.red_strum >25):
                     #     # print(str(current_time() - self.red_strum) +" red strum")
                     #     print(np.sum(self.r_df))
@@ -283,19 +303,21 @@ class PlayRedux(threading.Thread):
                     #     self.orange_strum = current_time()
                     #     self.notes.append('g')
                     #     if(np.sum(self.gn_df_two)>100):
-                    #         # print(str(np.sum(self.gn_df_two)) +" secondary green")
+                    
                     #         self.green_strum = current_time()
                     #         self.notes.append('a')
                     #     if(np.sum(self.r_df_two)>100):
                     #         # print(str(np.sum(self.r_df_two)) +" secondary red")
                     #         self.red_strum = current_time()
                     #         self.notes.append('s')
-                    #     if(np.sum(self.ye_df_two)>100):
-                    #         # print(str(np.sum(self.ye_df_two)) +" secondary yellow")
+                        # if(np.sum(self.ye_df_two) > 100 and np.sum(self.ye_df_three) > 10 and np.sum(self.ye_df_four) != 3239 
+                        #    and np.sum(self.ye_df_four) > 1200 and current_time() - self.yellow_strum > 38):
+                    
                     #         self.yellow_strum = current_time()
                     #         self.notes.append('d')
-                    #     if(np.sum(self.bl_df_two)>100):
-                    #         # print(str(np.sum(self.bl_df_two)) +" secondary blue")
+                    #     if(np.sum(self.bl_df_two) > 100 and np.sum(self.bl_df_three) > 10 and np.sum(self.bl_df_four) != 3318
+                        #  and np.sum(self.bl_df_four) > 1200 and current_time() - self.blue_strum >25):
+                    # 
                     #         self.blue_strum = current_time()
                     #         self.notes.append('f')
                     #     # print(current_time() - start)   
@@ -305,14 +327,15 @@ class PlayRedux(threading.Thread):
                         # print(str(i)+ " STRUM LINE \n ___________________________")
                         # i+=1
                         
+                        self.played = True
+                        self.save_test_image()
+                        
                         self.release_all()
                         self.strum()
                         
-                        # self.played = True
-                        # self.save_test_image()
                         
                         # print(current_time() - start)
-                    # self.save_image()
+                    # self.save_test_image()
             time.sleep(0.01) 
 
 play_thread = PlayRedux()
@@ -365,10 +388,10 @@ def on_press(key):
             cv2.rectangle(x['image'], (65,49), (71,55), (255,0,0), 1)
             cv2.rectangle(x['image'], (49,39), (54,44), (255,0,0), 1)
             
-            cv2.rectangle(x['image'], (219, 73), (225,79), (255,0,0), 1)
-            cv2.rectangle(x['image'], (219, 58), (225,64), (255,0,0), 1)
-            cv2.rectangle(x['image'], (209,49), (215,55), (255,0,0), 1)
-            cv2.rectangle(x['image'], (181,39), (186,44), (186,0,0), 1)
+            cv2.rectangle(x['image'], (219, 73), (225,79), (0,255,0), 1)
+            cv2.rectangle(x['image'], (219, 58), (225,64), (0,255,0), 1)
+            cv2.rectangle(x['image'], (209,49), (215,55), (0,255,0), 1)
+            cv2.rectangle(x['image'], (181,39), (186,44), (0,255,0), 1)
             
             cv2.rectangle(x['image'], (354, 73), (359,79), (255,0,0), 1)
             cv2.rectangle(x['image'], (354, 58), (359,64), (255,0,0), 1)
@@ -384,8 +407,8 @@ def on_press(key):
             cv2.rectangle(x['image'], (537, 58), (543,64), (255,0,0), 1)
             cv2.rectangle(x['image'], (552, 49), (558,55), (255,0,0), 1)
             cv2.rectangle(x['image'], (564,39), (569,44), (255,0,0), 1)
-            cv2.imwrite('img_{}_o{}_tw{}_th{}_f{}_{}.png'.format(y,
-                np.sum(x['yellow']),np.sum(x['second_yellow']),np.sum(x['third_yellow']),np.sum(x['fourth_yellow']),(x['played']),
+            cv2.imwrite('img_{}_o{}_tw{}_th{}_f{}_{}_{}.png'.format(y,
+                np.sum(x['green']),np.sum(x['second_green']),np.sum(x['third_green']),np.sum(x['fourth_green']),(x['played']), ''.join(str(z) for z in x['notes']) 
                 ),
                         cv2.cvtColor(x['image'], cv2.COLOR_RGB2BGR))
             # cv2.imwrite('img_{}_g{}_gtw{}_gth{}_r{}_rtw{}_rth{}_y{}_ytw{}_yth{}_b{}_btw{}_bth{}_o{}_otw{}_oth{}.png'.format(y,
