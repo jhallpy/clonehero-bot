@@ -47,8 +47,8 @@ class PlayRedux(threading.Thread):
     def set_area(self):
         # dxcam will return None if the image it takes would be the exact same image as the previous image. Therefore, this check is necessary.
         if (self.img_check is not None):
-            self.gn_chk = self.img_check[74:78, 74:78]
-            self.gn_chk_two = self.img_check[60:64, 74:78]
+            self.gn_chk = self.img_check[74:78, 84:88]
+            self.gn_chk_two = self.img_check[60:64, 84:88]
             self.gn_chk_three = self.img_check[50:54, 66:70]
             self.gn_chk_four = self.img_check[40:43, 50:53]
             
@@ -74,8 +74,8 @@ class PlayRedux(threading.Thread):
             
     def set_background(self):
         self.capture()
-        self.gn_bg = self.img_check[74:78, 74:78]
-        self.gn_bg_two = self.img_check[60:64, 74:78]
+        self.gn_bg = self.img_check[74:78,84:88]
+        self.gn_bg_two = self.img_check[60:64, 84:88]
         self.gn_bg_three = self.img_check[50:54, 66:70]
         self.gn_bg_four = self.img_check[40:43, 50:53]
         
@@ -163,6 +163,7 @@ class PlayRedux(threading.Thread):
         self.capture()
         self.set_area()
         self.set_times()
+        self.orange = []
         while self.program_running:
             while self.running:
                 self.capture()
@@ -178,7 +179,8 @@ class PlayRedux(threading.Thread):
                     # if(np.sum(self.gn_df_four) > 1200 and np.sum(self.gn_df_four) != 1910 and current_time() - self.red_strum >25):
                     #     print(np.sum(self.gn_df_four))
                     #     # self.save_test_image()
-                    
+                    # if(np.sum(self.or_df_four) > 0 ):
+                    #     print(np.sum(self.or_df_four))
                     if(np.sum(self.gn_df) > 20 and np.sum(self.gn_df_two) > 100 and np.sum(self.gn_df_three) > 20 
                        and np.sum(self.gn_df_four) != 1910 and np.sum(self.gn_df_four) > 1000
                        and current_time() - self.green_strum > 38):  
@@ -187,12 +189,12 @@ class PlayRedux(threading.Thread):
                         self.notes.append('a')
                         
                         if(np.sum(self.r_df_two) > 150 and np.sum(self.r_df_three) > 10 and np.sum(self.r_df_four) > 0 
-                           and np.sum(self.r_df_four) != 1955 and current_time() - self.red_strum > 38):
+                           and np.sum(self.r_df_four) != 1955 and np.sum(self.r_df_four) != 2051 and current_time() - self.red_strum > 38):
                             self.red_strum = current_time()
                             self.notes.append('s')
                             
                         if(np.sum(self.ye_df_two) > 100 and np.sum(self.ye_df_three) > 10 and np.sum(self.ye_df_four) != 3239 
-                           and np.sum(self.ye_df_four) > 0 and current_time() - self.yellow_strum > 38):
+                           and np.sum(self.ye_df_four) > 0 and np.sum(self.ye_df_four) != 1570 and current_time() - self.yellow_strum > 38):
                             self.yellow_strum = current_time()
                             self.notes.append('d')
                             
@@ -202,12 +204,12 @@ class PlayRedux(threading.Thread):
                             self.notes.append('f')
                             
                         if(np.sum(self.or_df_two) > 100 and np.sum(self.or_df_three) > 10 
-                           and np.sum(self.or_df_four) > 700 and current_time() - self.orange_strum > 38):
+                           and np.sum(self.or_df_four) > 700 and np.sum(self.or_df_four) != 3456 and current_time() - self.orange_strum > 38):
                             self.orange_strum = current_time()
                             self.notes.append('g')
                     
                     elif(np.sum(self.r_df) > 20 and np.sum(self.r_df_two) > 150 and np.sum(self.r_df_three) > 10 
-                       and np.sum(self.r_df_four) > 1000 and np.sum(self.r_df_four) != 1955
+                       and np.sum(self.r_df_four) > 1000 and np.sum(self.r_df_four) != 1955 and np.sum(self.r_df_four) != 2051
                        and current_time() - self.red_strum > 38):
                         print(str(current_time() - self.red_strum) + " red strum.")
                         self.red_strum = current_time()
@@ -219,7 +221,7 @@ class PlayRedux(threading.Thread):
                             self.notes.append('a')
                             
                         if(np.sum(self.ye_df_two) > 100 and np.sum(self.ye_df_three) > 10 and np.sum(self.ye_df_four) != 3239 
-                           and np.sum(self.ye_df_four) > 0 and current_time() - self.yellow_strum > 38):
+                           and np.sum(self.ye_df_four) > 0 and np.sum(self.ye_df_four) != 1570 and current_time() - self.yellow_strum > 38):
                             self.yellow_strum = current_time()
                             self.notes.append('d')
                             
@@ -229,13 +231,13 @@ class PlayRedux(threading.Thread):
                             self.notes.append('f')
                             
                         if(np.sum(self.or_df_two) > 100 and np.sum(self.or_df_three) > 10 
-                           and np.sum(self.or_df_four) > 700 and current_time() - self.orange_strum > 38):
+                           and np.sum(self.or_df_four) > 700 and np.sum(self.or_df_four) != 3456 and current_time() - self.orange_strum > 38):
                             self.orange_strum = current_time()
                             self.notes.append('g')
                     
                     elif(np.sum(self.ye_df) > 30 and np.sum(self.ye_df_two) > 100 and np.sum(self.ye_df_three) > 10 and np.sum(self.ye_df_four) != 3239 
-                       and np.sum(self.ye_df_four) > 1000 and current_time() - self.yellow_strum > 38):
-                        
+                       and np.sum(self.ye_df_four) > 1000 and np.sum(self.ye_df_four) != 1570
+                       and current_time() - self.yellow_strum > 38):
                         self.played = True
                         self.yellow_strum = current_time()
                         self.notes.append('d')
@@ -246,7 +248,7 @@ class PlayRedux(threading.Thread):
                             self.notes.append('a')
                             
                         if(np.sum(self.r_df_two) > 150 and np.sum(self.r_df_three) > 10 and np.sum(self.r_df_four) > 0 
-                           and np.sum(self.r_df_four) != 1955 and current_time() - self.red_strum > 38):
+                           and np.sum(self.r_df_four) != 1955 and np.sum(self.r_df_four) != 2051 and current_time() - self.red_strum > 38):
                             self.red_strum = current_time()
                             self.notes.append('s')
                             
@@ -256,7 +258,7 @@ class PlayRedux(threading.Thread):
                             self.notes.append('f')
                             
                         if(np.sum(self.or_df_two) > 100 and np.sum(self.or_df_three) > 10 
-                           and np.sum(self.or_df_four) > 700 and current_time() - self.orange_strum > 38):
+                           and np.sum(self.or_df_four) > 700 and np.sum(self.or_df_four) != 3456 and current_time() - self.orange_strum > 38):
                             self.orange_strum = current_time()
                             self.notes.append('g')
                         
@@ -272,25 +274,27 @@ class PlayRedux(threading.Thread):
                             self.notes.append('a')
                             
                         if(np.sum(self.r_df_two) > 150 and np.sum(self.r_df_three) > 10 and np.sum(self.r_df_four) > 0 
-                           and np.sum(self.r_df_four) != 1955 and current_time() - self.red_strum > 38):
+                           and np.sum(self.r_df_four) != 1955 and np.sum(self.r_df_four) != 2051 and current_time() - self.red_strum > 38):
                             self.red_strum = current_time()
                             self.notes.append('s')
                             
                         if(np.sum(self.ye_df_two) > 100 and np.sum(self.ye_df_three) > 10 and np.sum(self.ye_df_four) != 3239 
-                           and np.sum(self.ye_df_four) > 0 and current_time() - self.yellow_strum > 38):
+                           and np.sum(self.ye_df_four) > 0 and np.sum(self.ye_df_four) != 1570 and current_time() - self.yellow_strum > 38):
                             self.yellow_strum = current_time()
                             self.notes.append('d')
                             
                         if(np.sum(self.or_df_two) > 100 and np.sum(self.or_df_three) > 10 
-                           and np.sum(self.or_df_four) > 700 and current_time() - self.orange_strum > 38):
+                           and np.sum(self.or_df_four) > 700 and np.sum(self.or_df_four) != 3456 and current_time() - self.orange_strum > 38):
                             self.orange_strum = current_time()
                             self.notes.append('g')
                         
                     elif(np.sum(self.or_df) > 20 and np.sum(self.or_df_two) > 100 and np.sum(self.or_df_three) > 10 
                          and np.sum(self.or_df_four) > 700 
+                         and np.sum(self.or_df_four) != 3456
                          and current_time() - self.orange_strum > 38):
                         self.orange_strum = current_time()
                         self.notes.append('g')
+                        self.orange.append(np.sum(self.or_df_four))
                         
                         if(np.sum(self.gn_df_two) > 100 and np.sum(self.gn_df_three) > 20 and np.sum(self.gn_df_four) != 1910 
                            and np.sum(self.gn_df_four) > 0 and current_time() - self.green_strum > 38): 
@@ -298,12 +302,12 @@ class PlayRedux(threading.Thread):
                             self.notes.append('a')
                             
                         if(np.sum(self.r_df_two) > 150 and np.sum(self.r_df_three) > 10 and np.sum(self.r_df_four) > 0 
-                           and np.sum(self.r_df_four) != 1955 and current_time() - self.red_strum > 38):
+                           and np.sum(self.r_df_four) != 1955 and np.sum(self.r_df_four) != 2051 and current_time() - self.red_strum > 38):
                             self.red_strum = current_time()
                             self.notes.append('s')
                             
                         if(np.sum(self.ye_df_two) > 100 and np.sum(self.ye_df_three) > 10 and np.sum(self.ye_df_four) != 3239 
-                           and np.sum(self.ye_df_four) > 0 and current_time() - self.yellow_strum > 38):
+                           and np.sum(self.ye_df_four) > 0 and np.sum(self.ye_df_four) != 1570 and current_time() - self.yellow_strum > 38):
                             self.yellow_strum = current_time()
                             self.notes.append('d')
 
@@ -311,8 +315,8 @@ class PlayRedux(threading.Thread):
                          and np.sum(self.bl_df_four) > 0 and current_time() - self.blue_strum > 38):
                             self.blue_strum = current_time()
                             self.notes.append('f')
-                    # elif(np.sum(self.gn_df_four) > 0 or np.sum(self.r_df_four) > 0 or np.sum(self.ye_df_four) > 0 or np.sum(self.bl_df_four) > 0 or np.sum(self.or_df_four) > 0):
-                    #     self.save_test_image()
+                    elif(np.sum(self.gn_df_four) > 0 or np.sum(self.r_df_four) > 0 or np.sum(self.ye_df_four) > 0 or np.sum(self.bl_df_four) > 0 or np.sum(self.or_df_four) > 0):
+                        self.save_test_image()
                         
                     if (len(self.notes) > 0):
                         # print(self.notes)
@@ -327,7 +331,7 @@ class PlayRedux(threading.Thread):
                         
                         
                         # print(current_time() - start)
-                    self.save_test_image()
+                    # self.save_test_image()
             time.sleep(0.01) 
 
 play_thread = PlayRedux()
@@ -339,6 +343,9 @@ def current_time():
 def on_press(key):
     if key == start_stop_key:
         if play_thread.running:
+            if(len(play_thread.orange) > 0 ):
+                print(str(max(play_thread.orange)) + " Max")
+                print(str(min(play_thread.orange)) + " min")
             play_thread.release_all()
             play_thread.stop_playing()
         else:
@@ -352,8 +359,8 @@ def on_press(key):
         y = 1
         with open('notes.txt', 'w') as f:
             for x in play_thread.test_images:
-                cv2.rectangle(x['image'], (73, 73), (79,79), (255,0,0), 1)
-                cv2.rectangle(x['image'], (73, 58), (79,64), (255,0,0), 1)
+                cv2.rectangle(x['image'], (83, 73), (89,79), (255,0,0), 1)
+                cv2.rectangle(x['image'], (83, 58), (89,64), (255,0,0), 1)
                 cv2.rectangle(x['image'], (65,49), (71,55), (255,0,0), 1)
                 cv2.rectangle(x['image'], (49,39), (54,44), (255,0,0), 1)
                 
