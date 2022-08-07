@@ -160,7 +160,6 @@ class PlayRedux(threading.Thread):
         key_press.release('g')  
 
     def run(self):
-        i = 1
         self.capture()
         self.set_area()
         self.set_times()
@@ -180,162 +179,155 @@ class PlayRedux(threading.Thread):
                     #     print(np.sum(self.gn_df_four))
                     #     # self.save_test_image()
                     
-                    if(np.sum(self.gn_df) > 20 and np.sum(self.gn_df_two) > 1200 and np.sum(self.gn_df_three) > 20 
-                       and np.sum(self.gn_df_four) != 1910 and np.sum(self.gn_df_four) > 1200
+                    if(np.sum(self.gn_df) > 20 and np.sum(self.gn_df_two) > 100 and np.sum(self.gn_df_three) > 20 
+                       and np.sum(self.gn_df_four) != 1910 and np.sum(self.gn_df_four) > 1000
                        and current_time() - self.green_strum > 38):  
+                        print(str(current_time() - self.green_strum) + " green strum.")
                         self.green_strum = current_time()
                         self.notes.append('a')
                         
-                        if(np.sum(self.r_df_two) > 150 and np.sum(self.r_df_three) > 10 and np.sum(self.r_df_four) > 1200 
+                        if(np.sum(self.r_df_two) > 150 and np.sum(self.r_df_three) > 10 and np.sum(self.r_df_four) > 0 
                            and np.sum(self.r_df_four) != 1955 and current_time() - self.red_strum > 38):
-                            # print(str(np.sum(self.r_df_two)) +" secondary red")
                             self.red_strum = current_time()
                             self.notes.append('s')
                             
                         if(np.sum(self.ye_df_two) > 100 and np.sum(self.ye_df_three) > 10 and np.sum(self.ye_df_four) != 3239 
-                           and np.sum(self.ye_df_four) > 1200 and current_time() - self.yellow_strum > 38):
+                           and np.sum(self.ye_df_four) > 0 and current_time() - self.yellow_strum > 38):
                             self.yellow_strum = current_time()
                             self.notes.append('d')
                             
                         if(np.sum(self.bl_df_two) > 100 and np.sum(self.bl_df_three) > 10 and np.sum(self.bl_df_four) != 3318
-                         and np.sum(self.bl_df_four) > 1200 and current_time() - self.blue_strum > 38):
+                         and np.sum(self.bl_df_four) > 0 and current_time() - self.blue_strum > 38):
                             self.blue_strum = current_time()
                             self.notes.append('f')
                             
-                        # if(np.sum(self.or_df_two)>100):
-                        #     # print(str(np.sum(self.or_df_two)) +" secondary orange")
-                        #     self.orange_strum = current_time()
-                        #     self.notes.append('g')
+                        if(np.sum(self.or_df_two) > 100 and np.sum(self.or_df_three) > 10 
+                           and np.sum(self.or_df_four) > 700 and current_time() - self.orange_strum > 38):
+                            self.orange_strum = current_time()
+                            self.notes.append('g')
                     
                     elif(np.sum(self.r_df) > 20 and np.sum(self.r_df_two) > 150 and np.sum(self.r_df_three) > 10 
-                       and np.sum(self.r_df_four) > 1200 and np.sum(self.r_df_four) != 1955
+                       and np.sum(self.r_df_four) > 1000 and np.sum(self.r_df_four) != 1955
                        and current_time() - self.red_strum > 38):
-                        # self.save_test_image()
+                        print(str(current_time() - self.red_strum) + " red strum.")
                         self.red_strum = current_time()
                         self.notes.append('s')
                         
-                        if(np.sum(self.gn_df) > 750 and np.sum(self.gn_df_two) > 750 and np.sum(self.gn_df_three) > 200 and current_time() - self.green_strum > 25):
+                        if(np.sum(self.gn_df_two) > 100 and np.sum(self.gn_df_three) > 20 and np.sum(self.gn_df_four) != 1910 
+                           and np.sum(self.gn_df_four) > 0 and current_time() - self.green_strum > 38): 
                             self.green_strum = current_time()
                             self.notes.append('a')
                             
                         if(np.sum(self.ye_df_two) > 100 and np.sum(self.ye_df_three) > 10 and np.sum(self.ye_df_four) != 3239 
-                           and np.sum(self.ye_df_four) > 1200 and current_time() - self.yellow_strum > 38):
+                           and np.sum(self.ye_df_four) > 0 and current_time() - self.yellow_strum > 38):
                             self.yellow_strum = current_time()
                             self.notes.append('d')
                             
-                        if(np.sum(self.bl_df_two) > 100 and np.sum(self.bl_df_three) > 10 and np.sum(self.bl_df_four) != 3318
-                         and np.sum(self.bl_df_four) > 1200 and current_time() - self.blue_strum > 38):
+                        if(np.sum(self.bl_df_two) > 100 and np.sum(self.bl_df_three) > 10 and np.sum(self.bl_df_four) != 3324
+                         and np.sum(self.bl_df_four) > 0 and current_time() - self.blue_strum > 38):
                             self.blue_strum = current_time()
                             self.notes.append('f')
                             
-                        # if(np.sum(self.or_df_two) > 100 and np.sum(self.or_df_three) > 100 ):
-                        #     # print(str(np.sum(self.or_df_two)) +" secondary orange")
-                        #     self.orange_strum = current_time()
-                        #     self.notes.append('g')
+                        if(np.sum(self.or_df_two) > 100 and np.sum(self.or_df_three) > 10 
+                           and np.sum(self.or_df_four) > 700 and current_time() - self.orange_strum > 38):
+                            self.orange_strum = current_time()
+                            self.notes.append('g')
                     
-                    elif(np.sum(self.ye_df) > 20 and np.sum(self.ye_df_two) > 100 and np.sum(self.ye_df_three) > 10 and np.sum(self.ye_df_four) != 3239 
-                       and np.sum(self.ye_df_four) > 1200 and current_time() - self.yellow_strum > 38):
+                    elif(np.sum(self.ye_df) > 30 and np.sum(self.ye_df_two) > 100 and np.sum(self.ye_df_three) > 10 and np.sum(self.ye_df_four) != 3239 
+                       and np.sum(self.ye_df_four) > 1000 and current_time() - self.yellow_strum > 38):
                         
                         self.played = True
-                        # self.save_test_image()
-                        print(current_time() - self.yellow_strum)
                         self.yellow_strum = current_time()
                         self.notes.append('d')
                         
-                        if(np.sum(self.gn_df) > 750 and np.sum(self.gn_df_two) > 750 and np.sum(self.gn_df_three) > 200 and current_time() - self.green_strum > 25):
+                        if(np.sum(self.gn_df_two) > 100 and np.sum(self.gn_df_three) > 20 and np.sum(self.gn_df_four) != 1910 
+                           and np.sum(self.gn_df_four) > 0 and current_time() - self.green_strum > 38): 
                             self.green_strum = current_time()
                             self.notes.append('a')
                             
-                        if(np.sum(self.r_df_two) > 150 and np.sum(self.r_df_three) > 10 and np.sum(self.r_df_four) > 1200 
+                        if(np.sum(self.r_df_two) > 150 and np.sum(self.r_df_three) > 10 and np.sum(self.r_df_four) > 0 
                            and np.sum(self.r_df_four) != 1955 and current_time() - self.red_strum > 38):
                             self.red_strum = current_time()
                             self.notes.append('s')
                             
-                        if(np.sum(self.bl_df_two) > 100 and np.sum(self.bl_df_three) > 10 and np.sum(self.bl_df_four) != 3318
-                         and np.sum(self.bl_df_four) > 1200 and current_time() - self.blue_strum > 38):
+                        if(np.sum(self.bl_df_two) > 100 and np.sum(self.bl_df_three) > 10 and np.sum(self.bl_df_four) != 3324
+                         and np.sum(self.bl_df_four) > 0 and current_time() - self.blue_strum > 38):
                             self.blue_strum = current_time()
                             self.notes.append('f')
                             
-                        # if(np.sum(self.or_df_two)>100):
-                        #     print(str(np.sum(self.or_df_two)) +" secondary orange")
-                        #     self.orange_strum = current_time()
-                        #     self.notes.append('g')
+                        if(np.sum(self.or_df_two) > 100 and np.sum(self.or_df_three) > 10 
+                           and np.sum(self.or_df_four) > 700 and current_time() - self.orange_strum > 38):
+                            self.orange_strum = current_time()
+                            self.notes.append('g')
                         
-                    elif(np.sum(self.bl_df) > 10 and np.sum(self.bl_df_two) > 100 and np.sum(self.bl_df_three) > 10 and np.sum(self.bl_df_four) != 3318
-                         and np.sum(self.bl_df_four) > 1200 and current_time() - self.blue_strum > 38):
+                    elif(np.sum(self.bl_df) > 10 and np.sum(self.bl_df_two) > 100 and np.sum(self.bl_df_three) > 10 and np.sum(self.bl_df_four) != 3324
+                         and np.sum(self.bl_df_four) > 1000 and current_time() - self.blue_strum > 38):
+                        print(str(current_time() - self.blue_strum) + " blue strum.")
                         self.played = True
                         self.blue_strum = current_time()
                         self.notes.append('f')
-                        
-                        if(np.sum(self.gn_df) > 750 and np.sum(self.gn_df_two) > 750 and np.sum(self.gn_df_three) > 200 and current_time() - self.green_strum > 25):
+                        if(np.sum(self.gn_df_two) > 100 and np.sum(self.gn_df_three) > 20 and np.sum(self.gn_df_four) != 1910 
+                           and np.sum(self.gn_df_four) > 0 and current_time() - self.green_strum > 38): 
                             self.green_strum = current_time()
                             self.notes.append('a')
                             
-                        if(np.sum(self.r_df_two) > 150 and np.sum(self.r_df_three) > 10 and np.sum(self.r_df_four) > 1200 
+                        if(np.sum(self.r_df_two) > 150 and np.sum(self.r_df_three) > 10 and np.sum(self.r_df_four) > 0 
                            and np.sum(self.r_df_four) != 1955 and current_time() - self.red_strum > 38):
-                            # print(str(np.sum(self.r_df_two)) +" secondary red")
                             self.red_strum = current_time()
                             self.notes.append('s')
                             
                         if(np.sum(self.ye_df_two) > 100 and np.sum(self.ye_df_three) > 10 and np.sum(self.ye_df_four) != 3239 
-                           and np.sum(self.ye_df_four) > 1200 and current_time() - self.yellow_strum > 38):
+                           and np.sum(self.ye_df_four) > 0 and current_time() - self.yellow_strum > 38):
                             self.yellow_strum = current_time()
                             self.notes.append('d')
                             
-                        # if(np.sum(self.or_df_two)>100):
-                        #     print(str(np.sum(self.or_df_two)) +" secondary orange")
-                        #     self.orange_strum = current_time()
-                        #     self.notes.append('g')
+                        if(np.sum(self.or_df_two) > 100 and np.sum(self.or_df_three) > 10 
+                           and np.sum(self.or_df_four) > 700 and current_time() - self.orange_strum > 38):
+                            self.orange_strum = current_time()
+                            self.notes.append('g')
                         
-                    # elif(np.sum(self.r_df) > 200 and np.sum(self.r_df_two) > 200 and np.sum(self.r_df_three) > 200 and current_time() - self.red_strum >25):
-                    #     # print(str(current_time() - self.red_strum) +" red strum")
-                    #     print(np.sum(self.r_df))
-                    #     print(np.sum(self.r_df_two))
-                    #     print(np.sum(self.r_df_three))
-                    #     print('RED \n -------------------')
-                    #     self.red_strum = current_time()
-                    #     self.notes.append('s')
-                    
-                    #     # key_press.tap(Key.down)
-                    #     # print(current_time() - start)   
-                    # elif(np.sum(self.or_df) > 50 and np.sum(self.or_df_two) > 100 and current_time() - self.orange_strum > 25):
-                    #     print(str(current_time() - self.orange_strum) + " orange strum")
-                    #     self.orange_strum = current_time()
-                    #     self.notes.append('g')
-                    #     if(np.sum(self.gn_df_two)>100):
-                    
-                    #         self.green_strum = current_time()
-                    #         self.notes.append('a')
-                    #     if(np.sum(self.r_df_two)>100):
-                    #         # print(str(np.sum(self.r_df_two)) +" secondary red")
-                    #         self.red_strum = current_time()
-                    #         self.notes.append('s')
-                        # if(np.sum(self.ye_df_two) > 100 and np.sum(self.ye_df_three) > 10 and np.sum(self.ye_df_four) != 3239 
-                        #    and np.sum(self.ye_df_four) > 1200 and current_time() - self.yellow_strum > 38):
-                    
-                    #         self.yellow_strum = current_time()
-                    #         self.notes.append('d')
-                    #     if(np.sum(self.bl_df_two) > 100 and np.sum(self.bl_df_three) > 10 and np.sum(self.bl_df_four) != 3318
-                        #  and np.sum(self.bl_df_four) > 1200 and current_time() - self.blue_strum >25):
-                    # 
-                    #         self.blue_strum = current_time()
-                    #         self.notes.append('f')
-                    #     # print(current_time() - start)   
-                    # self.save_test_image()
+                    elif(np.sum(self.or_df) > 20 and np.sum(self.or_df_two) > 100 and np.sum(self.or_df_three) > 10 
+                         and np.sum(self.or_df_four) > 700 
+                         and current_time() - self.orange_strum > 38):
+                        self.orange_strum = current_time()
+                        self.notes.append('g')
+                        
+                        if(np.sum(self.gn_df_two) > 100 and np.sum(self.gn_df_three) > 20 and np.sum(self.gn_df_four) != 1910 
+                           and np.sum(self.gn_df_four) > 0 and current_time() - self.green_strum > 38): 
+                            self.green_strum = current_time()
+                            self.notes.append('a')
+                            
+                        if(np.sum(self.r_df_two) > 150 and np.sum(self.r_df_three) > 10 and np.sum(self.r_df_four) > 0 
+                           and np.sum(self.r_df_four) != 1955 and current_time() - self.red_strum > 38):
+                            self.red_strum = current_time()
+                            self.notes.append('s')
+                            
+                        if(np.sum(self.ye_df_two) > 100 and np.sum(self.ye_df_three) > 10 and np.sum(self.ye_df_four) != 3239 
+                           and np.sum(self.ye_df_four) > 0 and current_time() - self.yellow_strum > 38):
+                            self.yellow_strum = current_time()
+                            self.notes.append('d')
+
+                        if(np.sum(self.bl_df_two) > 100 and np.sum(self.bl_df_three) > 10 and np.sum(self.bl_df_four) != 3324
+                         and np.sum(self.bl_df_four) > 0 and current_time() - self.blue_strum > 38):
+                            self.blue_strum = current_time()
+                            self.notes.append('f')
+                    # elif(np.sum(self.gn_df_four) > 0 or np.sum(self.r_df_four) > 0 or np.sum(self.ye_df_four) > 0 or np.sum(self.bl_df_four) > 0 or np.sum(self.or_df_four) > 0):
+                    #     self.save_test_image()
+                        
                     if (len(self.notes) > 0):
                         # print(self.notes)
                         # print(str(i)+ " STRUM LINE \n ___________________________")
                         # i+=1
                         
                         self.played = True
-                        self.save_test_image()
+                        # self.save_test_image()
                         
                         self.release_all()
                         self.strum()
                         
                         
                         # print(current_time() - start)
-                    # self.save_test_image()
+                    self.save_test_image()
             time.sleep(0.01) 
 
 play_thread = PlayRedux()
@@ -358,68 +350,52 @@ def on_press(key):
     elif key == stop_key:
         cv2.imwrite('test_image.png', cv2.cvtColor(np.asarray(ImageGrab.grab(bbox=capture_area)), cv2.COLOR_RGB2BGR))
         y = 1
-        for x in play_thread.test_images:
-            #     self.gn_bg = self.img_check[74:78, 74:78]
-            # self.gn_bg_two = self.img_check[60:64, 74:78]
-            # self.gn_bg_three = self.img_check[50:54, 66:70]
-            # self.gn_bg_four = self.img_check[40:43, 50:53]
-            
-            # self.r_bg = self.img_check[74:78, 220:224]
-            # self.r_bg_two = self.img_check[60:64, 220:224]
-            # self.r_bg_three = self.img_check[50:54, 210:214]
-            # self.r_bg_four = self.img_check[40:43, 182:185]
-            
-            # self.ye_bg = self.img_check[74:78, 355:359]
-            # self.ye_bg_two = self.img_check[60:64, 355:359]
-            # self.ye_bg_three = self.img_check[50:54, 352:356]
-            # self.ye_bg_four = self.img_check[40:43, 308:311]
-            
-            # self.bl_bg = self.img_check[74:78, 485:489]
-            # self.bl_bg_two = self.img_check[60:64, 485:489]
-            # self.bl_bg_three = self.img_check[50:54, 480:484]
-            # self.bl_bg_four = self.img_check[40:43, 433:436]
-            
-            # self.or_bg = self.img_check[74:78, 538:542]
-            # self.or_bg_two = self.img_check[60:64, 538:542]
-            # self.or_bg_three = self.img_check[50:54, 553:557]
-            # self.or_bg_four = self.img_check[40:43, 565:568]
-            cv2.rectangle(x['image'], (73, 73), (79,79), (255,0,0), 1)
-            cv2.rectangle(x['image'], (73, 58), (79,64), (255,0,0), 1)
-            cv2.rectangle(x['image'], (65,49), (71,55), (255,0,0), 1)
-            cv2.rectangle(x['image'], (49,39), (54,44), (255,0,0), 1)
-            
-            cv2.rectangle(x['image'], (219, 73), (225,79), (0,255,0), 1)
-            cv2.rectangle(x['image'], (219, 58), (225,64), (0,255,0), 1)
-            cv2.rectangle(x['image'], (209,49), (215,55), (0,255,0), 1)
-            cv2.rectangle(x['image'], (181,39), (186,44), (0,255,0), 1)
-            
-            cv2.rectangle(x['image'], (354, 73), (359,79), (255,0,0), 1)
-            cv2.rectangle(x['image'], (354, 58), (359,64), (255,0,0), 1)
-            cv2.rectangle(x['image'], (351,49), (357,55), (255,0,0), 1)
-            cv2.rectangle(x['image'], (307,39), (312,44), (255,0,0), 1)
-            
-            cv2.rectangle(x['image'], (484, 73), (490,79), (255,0,0), 1)
-            cv2.rectangle(x['image'], (484, 58), (490,64), (255,0,0), 1)
-            cv2.rectangle(x['image'], (479, 49), (485,55), (255,0,0), 1)
-            cv2.rectangle(x['image'], (432,39), (437,44), (255,0,0), 1)
-            
-            cv2.rectangle(x['image'], (537, 73), (543,79), (255,0,0), 1)
-            cv2.rectangle(x['image'], (537, 58), (543,64), (255,0,0), 1)
-            cv2.rectangle(x['image'], (552, 49), (558,55), (255,0,0), 1)
-            cv2.rectangle(x['image'], (564,39), (569,44), (255,0,0), 1)
-            cv2.imwrite('img_{}_o{}_tw{}_th{}_f{}_{}_{}.png'.format(y,
-                np.sum(x['green']),np.sum(x['second_green']),np.sum(x['third_green']),np.sum(x['fourth_green']),(x['played']), ''.join(str(z) for z in x['notes']) 
-                ),
-                        cv2.cvtColor(x['image'], cv2.COLOR_RGB2BGR))
-            # cv2.imwrite('img_{}_g{}_gtw{}_gth{}_r{}_rtw{}_rth{}_y{}_ytw{}_yth{}_b{}_btw{}_bth{}_o{}_otw{}_oth{}.png'.format(y,
-            #     np.sum(x['green']),np.sum(x['second_green']),np.sum(x['third_green']),
-            #     np.sum(x['red']),np.sum(x['second_red']),np.sum(x['third_red']),
-            #     np.sum(x['yellow']),np.sum(x['second_yellow']),np.sum(x['third_yellow']),
-            #     np.sum(x['blue']),np.sum(x['second_blue']),np.sum(x['third_blue']),
-            #     np.sum(x['orange']),np.sum(x['second_orange']),np.sum(x['third_orange']),
-            #     ),
-            #             cv2.cvtColor(x['image'], cv2.COLOR_RGB2BGR))
-            y+=1
+        with open('notes.txt', 'w') as f:
+            for x in play_thread.test_images:
+                cv2.rectangle(x['image'], (73, 73), (79,79), (255,0,0), 1)
+                cv2.rectangle(x['image'], (73, 58), (79,64), (255,0,0), 1)
+                cv2.rectangle(x['image'], (65,49), (71,55), (255,0,0), 1)
+                cv2.rectangle(x['image'], (49,39), (54,44), (255,0,0), 1)
+                
+                cv2.rectangle(x['image'], (219, 73), (225,79), (0,255,0), 1)
+                cv2.rectangle(x['image'], (219, 58), (225,64), (0,255,0), 1)
+                cv2.rectangle(x['image'], (209,49), (215,55), (0,255,0), 1)
+                cv2.rectangle(x['image'], (181,39), (186,44), (0,255,0), 1)
+                
+                cv2.rectangle(x['image'], (354, 73), (359,79), (255,0,0), 1)
+                cv2.rectangle(x['image'], (354, 58), (359,64), (255,0,0), 1)
+                cv2.rectangle(x['image'], (351,49), (357,55), (255,0,0), 1)
+                cv2.rectangle(x['image'], (307,39), (312,44), (255,0,0), 1)
+                
+                cv2.rectangle(x['image'], (484, 73), (490,79), (255,0,0), 1)
+                cv2.rectangle(x['image'], (484, 58), (490,64), (255,0,0), 1)
+                cv2.rectangle(x['image'], (479, 49), (485,55), (255,0,0), 1)
+                cv2.rectangle(x['image'], (432,39), (437,44), (255,0,0), 1)
+                
+                cv2.rectangle(x['image'], (537, 73), (543,79), (255,0,0), 1)
+                cv2.rectangle(x['image'], (537, 58), (543,64), (255,0,0), 1)
+                cv2.rectangle(x['image'], (552, 49), (558,55), (255,0,0), 1)
+                cv2.rectangle(x['image'], (564,39), (569,44), (255,0,0), 1)
+                if(x['played']):
+                    f.write('\n Img {} {} {} \n Green o{} tw{} th{} f{} \n Red o{} tw{} th{} f{} \n Yellow o{} tw{} th{} f{} \n Blue o{} tw{} th{} f{} \n Orange o{} tw{} th{} f{} \n'.format(
+                        y, x['played'], ''.join(str(z) for z in x['notes']),
+                        np.sum(x['green']),np.sum(x['second_green']),np.sum(x['third_green']), np.sum(x['fourth_green']),
+                        np.sum(x['red']),np.sum(x['second_red']),np.sum(x['third_red']), np.sum(x['fourth_red']),
+                        np.sum(x['yellow']),np.sum(x['second_yellow']),np.sum(x['third_yellow']), np.sum(x['fourth_yellow']),
+                        np.sum(x['blue']),np.sum(x['second_blue']),np.sum(x['third_blue']), np.sum(x['fourth_blue']),
+                        np.sum(x['orange']),np.sum(x['second_orange']),np.sum(x['third_orange']), np.sum(x['fourth_orange']),
+                    ))
+                else:
+                    f.write('\n Img {} {}  \n Green o{} tw{} th{} f{} \n Red o{} tw{} th{} f{} \n Yellow o{} tw{} th{} f{} \n Blue o{} tw{} th{} f{} \n Orange o{} tw{} th{} f{} \n'.format(
+                        y, x['played'],
+                        np.sum(x['green']),np.sum(x['second_green']),np.sum(x['third_green']), np.sum(x['fourth_green']),
+                        np.sum(x['red']),np.sum(x['second_red']),np.sum(x['third_red']), np.sum(x['fourth_red']),
+                        np.sum(x['yellow']),np.sum(x['second_yellow']),np.sum(x['third_yellow']), np.sum(x['fourth_yellow']),
+                        np.sum(x['blue']),np.sum(x['second_blue']),np.sum(x['third_blue']), np.sum(x['fourth_blue']),
+                        np.sum(x['orange']),np.sum(x['second_orange']),np.sum(x['third_orange']), np.sum(x['fourth_orange']),
+                    ))
+                cv2.imwrite('img_{}_{}.png'.format(y, x['played']), cv2.cvtColor(x['image'], cv2.COLOR_RGB2BGR))
+                y+=1
         play_thread.release_all()
         play_thread.exit()
         listener.stop()
