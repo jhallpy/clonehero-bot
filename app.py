@@ -43,7 +43,9 @@ class PlayRedux(threading.Thread):
         self.capture()
         cv2.imwrite('screenshot_img_{}.png'.format(screenshot), np.array(ImageGrab.grab(bbox=capture_area)))
         self.screenshot += 1
-        
+    def test_set_area(self):
+      if (self.img_check is not None):
+          self.test_gn_chk = self.img_check[45:60, 270:340]
     def set_area(self):
         # dxcam will return None if the image it takes would be the exact same image as the previous image. Therefore, this check is necessary.
         if (self.img_check is not None):
@@ -169,6 +171,7 @@ class PlayRedux(threading.Thread):
                 self.capture()
                 self.notes = []
                 self.played = False
+                start = current_time()
                 # dxcam will return None if the image it takes would be the exact same image as the previous image. Therefore, this check is necessary.
                 if (self.img_check is None):
                     continue
@@ -184,7 +187,7 @@ class PlayRedux(threading.Thread):
                     if(np.sum(self.gn_df) > 20 and np.sum(self.gn_df_two) > 100 and np.sum(self.gn_df_three) > 20 
                        and np.sum(self.gn_df_four) != 1910 and np.sum(self.gn_df_four) > 1000
                        and current_time() - self.green_strum > 38):  
-                        print(str(current_time() - self.green_strum) + " green strum.")
+                        # print(str(current_time() - self.green_strum) + " green strum.")
                         self.green_strum = current_time()
                         self.notes.append('a')
                         
@@ -211,7 +214,7 @@ class PlayRedux(threading.Thread):
                     elif(np.sum(self.r_df) > 20 and np.sum(self.r_df_two) > 150 and np.sum(self.r_df_three) > 10 
                        and np.sum(self.r_df_four) > 1000 and np.sum(self.r_df_four) != 1955 and np.sum(self.r_df_four) != 2051
                        and current_time() - self.red_strum > 38):
-                        print(str(current_time() - self.red_strum) + " red strum.")
+                        # print(str(current_time() - self.red_strum) + " red strum.")
                         self.red_strum = current_time()
                         self.notes.append('s')
                         
@@ -264,7 +267,7 @@ class PlayRedux(threading.Thread):
                         
                     elif(np.sum(self.bl_df) > 10 and np.sum(self.bl_df_two) > 100 and np.sum(self.bl_df_three) > 10 and np.sum(self.bl_df_four) != 3324
                          and np.sum(self.bl_df_four) > 1000 and current_time() - self.blue_strum > 38):
-                        print(str(current_time() - self.blue_strum) + " blue strum.")
+                        # print(str(current_time() - self.blue_strum) + " blue strum.")
                         self.played = True
                         self.blue_strum = current_time()
                         self.notes.append('f')
@@ -294,7 +297,7 @@ class PlayRedux(threading.Thread):
                          and current_time() - self.orange_strum > 38):
                         self.orange_strum = current_time()
                         self.notes.append('g')
-                        self.orange.append(np.sum(self.or_df_four))
+                        self.orange.append(np.sum(self.or_df))
                         
                         if(np.sum(self.gn_df_two) > 100 and np.sum(self.gn_df_three) > 20 and np.sum(self.gn_df_four) != 1910 
                            and np.sum(self.gn_df_four) > 0 and current_time() - self.green_strum > 38): 
@@ -315,23 +318,16 @@ class PlayRedux(threading.Thread):
                          and np.sum(self.bl_df_four) > 0 and current_time() - self.blue_strum > 38):
                             self.blue_strum = current_time()
                             self.notes.append('f')
-                    elif(np.sum(self.gn_df_four) > 0 or np.sum(self.r_df_four) > 0 or np.sum(self.ye_df_four) > 0 or np.sum(self.bl_df_four) > 0 or np.sum(self.or_df_four) > 0):
-                        self.save_test_image()
+                    # elif(np.sum(self.gn_df_four) > 0 or np.sum(self.r_df_four) > 0 or np.sum(self.ye_df_four) > 0 or np.sum(self.bl_df_four) > 0 or np.sum(self.or_df_four) > 0):
+                    #     self.save_test_image()
                         
                     if (len(self.notes) > 0):
-                        # print(self.notes)
-                        # print(str(i)+ " STRUM LINE \n ___________________________")
-                        # i+=1
-                        
                         self.played = True
                         # self.save_test_image()
                         
                         self.release_all()
                         self.strum()
-                        
-                        
-                        # print(current_time() - start)
-                    # self.save_test_image()
+                    print(current_time() - start)
             time.sleep(0.01) 
 
 play_thread = PlayRedux()
@@ -356,53 +352,53 @@ def on_press(key):
         play_thread.save_image()
     elif key == stop_key:
         cv2.imwrite('test_image.png', cv2.cvtColor(np.asarray(ImageGrab.grab(bbox=capture_area)), cv2.COLOR_RGB2BGR))
-        y = 1
-        with open('notes.txt', 'w') as f:
-            for x in play_thread.test_images:
-                cv2.rectangle(x['image'], (83, 73), (89,79), (255,0,0), 1)
-                cv2.rectangle(x['image'], (83, 58), (89,64), (255,0,0), 1)
-                cv2.rectangle(x['image'], (65,49), (71,55), (255,0,0), 1)
-                cv2.rectangle(x['image'], (49,39), (54,44), (255,0,0), 1)
+        # y = 1
+        # with open('notes.txt', 'w') as f:
+        #     for x in play_thread.test_images:
+        #         cv2.rectangle(x['image'], (83, 73), (89,79), (255,0,0), 1)
+        #         cv2.rectangle(x['image'], (83, 58), (89,64), (255,0,0), 1)
+        #         cv2.rectangle(x['image'], (65,49), (71,55), (255,0,0), 1)
+        #         cv2.rectangle(x['image'], (49,39), (54,44), (255,0,0), 1)
                 
-                cv2.rectangle(x['image'], (219, 73), (225,79), (0,255,0), 1)
-                cv2.rectangle(x['image'], (219, 58), (225,64), (0,255,0), 1)
-                cv2.rectangle(x['image'], (209,49), (215,55), (0,255,0), 1)
-                cv2.rectangle(x['image'], (181,39), (186,44), (0,255,0), 1)
+        #         cv2.rectangle(x['image'], (219, 73), (225,79), (0,255,0), 1)
+        #         cv2.rectangle(x['image'], (219, 58), (225,64), (0,255,0), 1)
+        #         cv2.rectangle(x['image'], (209,49), (215,55), (0,255,0), 1)
+        #         cv2.rectangle(x['image'], (181,39), (186,44), (0,255,0), 1)
                 
-                cv2.rectangle(x['image'], (354, 73), (359,79), (255,0,0), 1)
-                cv2.rectangle(x['image'], (354, 58), (359,64), (255,0,0), 1)
-                cv2.rectangle(x['image'], (351,49), (357,55), (255,0,0), 1)
-                cv2.rectangle(x['image'], (307,39), (312,44), (255,0,0), 1)
+        #         cv2.rectangle(x['image'], (354, 73), (359,79), (255,0,0), 1)
+        #         cv2.rectangle(x['image'], (354, 58), (359,64), (255,0,0), 1)
+        #         cv2.rectangle(x['image'], (351,49), (357,55), (255,0,0), 1)
+        #         cv2.rectangle(x['image'], (307,39), (312,44), (255,0,0), 1)
                 
-                cv2.rectangle(x['image'], (484, 73), (490,79), (255,0,0), 1)
-                cv2.rectangle(x['image'], (484, 58), (490,64), (255,0,0), 1)
-                cv2.rectangle(x['image'], (479, 49), (485,55), (255,0,0), 1)
-                cv2.rectangle(x['image'], (432,39), (437,44), (255,0,0), 1)
+        #         cv2.rectangle(x['image'], (484, 73), (490,79), (255,0,0), 1)
+        #         cv2.rectangle(x['image'], (484, 58), (490,64), (255,0,0), 1)
+        #         cv2.rectangle(x['image'], (479, 49), (485,55), (255,0,0), 1)
+        #         cv2.rectangle(x['image'], (432,39), (437,44), (255,0,0), 1)
                 
-                cv2.rectangle(x['image'], (537, 73), (543,79), (255,0,0), 1)
-                cv2.rectangle(x['image'], (537, 58), (543,64), (255,0,0), 1)
-                cv2.rectangle(x['image'], (552, 49), (558,55), (255,0,0), 1)
-                cv2.rectangle(x['image'], (564,39), (569,44), (255,0,0), 1)
-                if(x['played']):
-                    f.write('\n Img {} {} {} \n Green o{} tw{} th{} f{} \n Red o{} tw{} th{} f{} \n Yellow o{} tw{} th{} f{} \n Blue o{} tw{} th{} f{} \n Orange o{} tw{} th{} f{} \n'.format(
-                        y, x['played'], ''.join(str(z) for z in x['notes']),
-                        np.sum(x['green']),np.sum(x['second_green']),np.sum(x['third_green']), np.sum(x['fourth_green']),
-                        np.sum(x['red']),np.sum(x['second_red']),np.sum(x['third_red']), np.sum(x['fourth_red']),
-                        np.sum(x['yellow']),np.sum(x['second_yellow']),np.sum(x['third_yellow']), np.sum(x['fourth_yellow']),
-                        np.sum(x['blue']),np.sum(x['second_blue']),np.sum(x['third_blue']), np.sum(x['fourth_blue']),
-                        np.sum(x['orange']),np.sum(x['second_orange']),np.sum(x['third_orange']), np.sum(x['fourth_orange']),
-                    ))
-                else:
-                    f.write('\n Img {} {}  \n Green o{} tw{} th{} f{} \n Red o{} tw{} th{} f{} \n Yellow o{} tw{} th{} f{} \n Blue o{} tw{} th{} f{} \n Orange o{} tw{} th{} f{} \n'.format(
-                        y, x['played'],
-                        np.sum(x['green']),np.sum(x['second_green']),np.sum(x['third_green']), np.sum(x['fourth_green']),
-                        np.sum(x['red']),np.sum(x['second_red']),np.sum(x['third_red']), np.sum(x['fourth_red']),
-                        np.sum(x['yellow']),np.sum(x['second_yellow']),np.sum(x['third_yellow']), np.sum(x['fourth_yellow']),
-                        np.sum(x['blue']),np.sum(x['second_blue']),np.sum(x['third_blue']), np.sum(x['fourth_blue']),
-                        np.sum(x['orange']),np.sum(x['second_orange']),np.sum(x['third_orange']), np.sum(x['fourth_orange']),
-                    ))
-                cv2.imwrite('img_{}_{}.png'.format(y, x['played']), cv2.cvtColor(x['image'], cv2.COLOR_RGB2BGR))
-                y+=1
+        #         cv2.rectangle(x['image'], (537, 73), (543,79), (255,0,0), 1)
+        #         cv2.rectangle(x['image'], (537, 58), (543,64), (255,0,0), 1)
+        #         cv2.rectangle(x['image'], (552, 49), (558,55), (255,0,0), 1)
+        #         cv2.rectangle(x['image'], (564,39), (569,44), (255,0,0), 1)
+        #         if(x['played']):
+        #             f.write('\n Img {} {} {} \n Green o{} tw{} th{} f{} \n Red o{} tw{} th{} f{} \n Yellow o{} tw{} th{} f{} \n Blue o{} tw{} th{} f{} \n Orange o{} tw{} th{} f{} \n'.format(
+        #                 y, x['played'], ''.join(str(z) for z in x['notes']),
+        #                 np.sum(x['green']),np.sum(x['second_green']),np.sum(x['third_green']), np.sum(x['fourth_green']),
+        #                 np.sum(x['red']),np.sum(x['second_red']),np.sum(x['third_red']), np.sum(x['fourth_red']),
+        #                 np.sum(x['yellow']),np.sum(x['second_yellow']),np.sum(x['third_yellow']), np.sum(x['fourth_yellow']),
+        #                 np.sum(x['blue']),np.sum(x['second_blue']),np.sum(x['third_blue']), np.sum(x['fourth_blue']),
+        #                 np.sum(x['orange']),np.sum(x['second_orange']),np.sum(x['third_orange']), np.sum(x['fourth_orange']),
+        #             ))
+        #         else:
+        #             f.write('\n Img {} {}  \n Green o{} tw{} th{} f{} \n Red o{} tw{} th{} f{} \n Yellow o{} tw{} th{} f{} \n Blue o{} tw{} th{} f{} \n Orange o{} tw{} th{} f{} \n'.format(
+        #                 y, x['played'],
+        #                 np.sum(x['green']),np.sum(x['second_green']),np.sum(x['third_green']), np.sum(x['fourth_green']),
+        #                 np.sum(x['red']),np.sum(x['second_red']),np.sum(x['third_red']), np.sum(x['fourth_red']),
+        #                 np.sum(x['yellow']),np.sum(x['second_yellow']),np.sum(x['third_yellow']), np.sum(x['fourth_yellow']),
+        #                 np.sum(x['blue']),np.sum(x['second_blue']),np.sum(x['third_blue']), np.sum(x['fourth_blue']),
+        #                 np.sum(x['orange']),np.sum(x['second_orange']),np.sum(x['third_orange']), np.sum(x['fourth_orange']),
+        #             ))
+        #         cv2.imwrite('img_{}_{}.png'.format(y, x['played']), cv2.cvtColor(x['image'], cv2.COLOR_RGB2BGR))
+        #         y+=1
         play_thread.release_all()
         play_thread.exit()
         listener.stop()
