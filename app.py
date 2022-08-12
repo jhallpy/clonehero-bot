@@ -66,8 +66,8 @@ class PlayRedux(threading.Thread):
         ye_mask_bg = cv2.inRange(converted, self.ye_lower, self.ye_upper)
         bl_mask_bg = cv2.inRange(converted, self.bl_lower, self.bl_upper)
         # or_mask_bg = cv2.inRange(converted, self.or_lower, self.or_upper)
-        
-        self.gn_bg = gn_mask_bg[56:72, 77:95]
+        # Green needs to be 2 higher due to star notes very rarely not hitting the box, thus missing the note.
+        self.gn_bg = gn_mask_bg[54:72, 77:95]
         self.gn_bg_t = gn_mask_bg[52:56, 48:52]
         
         self.r_bg = r_mask_bg[56:72, 208:227]
@@ -89,7 +89,8 @@ class PlayRedux(threading.Thread):
             self.ye_mask = cv2.inRange(converted, self.ye_lower, self.ye_upper)
             self.bl_mask = cv2.inRange(converted, self.bl_lower, self.bl_upper)
             
-            self.gn_chk = self.gn_mask[56:72, 77:95]
+            # Green needs to be 2 higher due to star notes very rarely not hitting the box, thus missing the note.
+            self.gn_chk = self.gn_mask[54:72, 77:95]
             self.gn_chk_t = self.gn_mask[52:56, 48:52]
             
             self.r_chk = self.r_mask[56:72, 208:227]
@@ -156,11 +157,11 @@ class PlayRedux(threading.Thread):
                     self.background_subtraction()
                     # print(np.sum(self.r_df))
                         
-                    if(np.sum(self.gn_df) > 600 and current_time() - self.green_strum > 38):
+                    if(np.sum(self.gn_df) > 300 and current_time() - self.green_strum > 38):
                         print(str(current_time() - self.green_strum) + " green strum")
                         self.green_strum = current_time()
                         self.played = True
-                        # self.img_check = self.gn_mask
+                        self.img_check = self.gn_mask
                         self.notes.append('a')
                         if((np.sum(self.r_df) > 200 or np.sum(self.r_df_t) > 200) and current_time() - self.red_strum > 38):
                             self.red_strum = current_time()
@@ -231,13 +232,13 @@ class PlayRedux(threading.Thread):
                             self.yellow_strum = current_time()
                             self.played = True
                             self.notes.append('d')
-                            
+                         
                     if (len(self.notes) > 0):
                         self.save_image()
                         self.release_all()
                         self.strum()
-                    elif(np.sum(self.gn_df) > 0 or np.sum(self.r_df) > 0 or np.sum(self.ye_df) > 0 or np.sum(self.bl_df) > 0):
-                        # self.img_check = self.gn_mask
+                    elif(np.sum(self.gn_df_t) > 0): # or np.sum(self.r_df_t) > 0 or np.sum(self.ye_df_t) > 0 or np.sum(self.bl_df_t) > 0):
+                        self.img_check = self.gn_mask
                         self.save_image()
                     # print(current_time() - start)
             time.sleep(0.01) 
@@ -255,7 +256,7 @@ def on_press(key):
             play_thread.stop_playing()
             y=1
             for x in play_thread.images:
-                cv2.rectangle(x['image'], (76, 55), (96,73), (255,0,0), 1)
+                cv2.rectangle(x['image'], (76, 53), (96,73), (255,0,0), 1)
                 cv2.rectangle(x['image'], (207, 55), (228,73), (255,0,0), 1)
                 cv2.rectangle(x['image'], (344, 53), (373,73), (255,0,0), 1)
                 cv2.rectangle(x['image'], (473, 55), (501,73), (255,0,0), 1)
