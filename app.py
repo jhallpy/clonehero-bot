@@ -19,6 +19,7 @@ R_LOWER = np.array([0, 100, 100])
 R_UPPER = np.array([10, 255, 255])
 YE_LOWER = np.array([20, 100, 100])
 YE_UPPER = np.array([40, 255, 255])
+# Blue unique, the note color and the hold note line are not the exact same color so the line can be completely erased.
 BL_LOWER = np.array([100, 100, 100])
 BL_UPPER = np.array([120, 255, 255])
 OR_LOWER = np.array([])
@@ -157,7 +158,7 @@ class PlayRedux(threading.Thread):
                     self.background_subtraction()
                     # print(np.sum(self.r_df))
                         
-                    if(np.sum(self.gn_df) > 300 and current_time() - self.green_strum > 38):
+                    if(np.sum(self.gn_df) > 800 and current_time() - self.green_strum > 38):
                         print(str(current_time() - self.green_strum) + " green strum")
                         self.green_strum = current_time()
                         self.played = True
@@ -232,13 +233,24 @@ class PlayRedux(threading.Thread):
                             self.yellow_strum = current_time()
                             self.played = True
                             self.notes.append('d')
-                         
+                            
+                    # self.img_check = self.bl_mask
+                    # self.save_image()    
                     if (len(self.notes) > 0):
                         self.save_image()
                         self.release_all()
                         self.strum()
-                    elif(np.sum(self.gn_df_t) > 0): # or np.sum(self.r_df_t) > 0 or np.sum(self.ye_df_t) > 0 or np.sum(self.bl_df_t) > 0):
+                    elif(np.sum(self.gn_df_t) > 0):
                         self.img_check = self.gn_mask
+                        self.save_image()
+                    elif(np.sum(self.r_df_t) > 0):
+                        self.img_check = self.r_mask
+                        self.save_image()
+                    elif(np.sum(self.ye_df_t) > 0): 
+                        self.img_check = self.ye_mask
+                        self.save_image()
+                    elif(np.sum(self.bl_df_t) > 0): 
+                        self.img_check = self.bl_mask
                         self.save_image()
                     # print(current_time() - start)
             time.sleep(0.01) 
