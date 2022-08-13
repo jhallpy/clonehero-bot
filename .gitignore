@@ -1,4 +1,5 @@
 venv
 *.png
 image_grab.py
-*.txt
+
+!background.png
