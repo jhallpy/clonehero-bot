@@ -1,0 +1,7 @@
+comtypes==1.1.11
+dxcam==0.0.4
+keyboard==0.13.5
+numpy==1.22.4
+opencv-python==4.6.0.66
+pynput==1.7.6
+six==1.16.0
