@@ -4,8 +4,6 @@ import cv2
 import dxcam
 import threading
 from pynput.keyboard import Key, Controller, Listener, KeyCode
-from PIL import ImageGrab
-from sys import getsizeof
 
 camera = dxcam.create()
 key_press = Controller()
@@ -73,7 +71,7 @@ class PlayRedux(threading.Thread):
         # Green needs to be 2 higher due to star notes very rarely not hitting the box, thus missing the note.
         self.gn_bg = gn_mask_bg[54:72, 77:95]
         self.gn_bg_t = gn_mask_bg[52:56, 48:52]
-        # was 213 not 208
+
         self.r_bg = r_mask_bg[56:72, 213:227]
         self.r_bg_t = r_mask_bg[52:56, 179:183]
         # Yellow needed to be 2 higher in order to have at least some number when checking if other notes were present.
@@ -99,7 +97,7 @@ class PlayRedux(threading.Thread):
             # Green needs to be 2 higher due to star notes very rarely not hitting the box, thus missing the note.
             self.gn_chk = self.gn_mask[54:72, 77:95]
             self.gn_chk_t = self.gn_mask[52:56, 48:52]
-            # was 213 not 208
+
             self.r_chk = self.r_mask[56:72, 213:227]
             self.r_chk_t = self.r_mask[52:56, 179:183]
             
@@ -158,7 +156,7 @@ class PlayRedux(threading.Thread):
                 self.capture()
                 self.notes = []
                 self.played = False
-                start = current_time()
+                # start = current_time()
                 # dxcam will return None if the image it takes would be the exact same image as the previous image. Therefore, this check is necessary.
                 if (self.img_check is None):
                     continue
@@ -166,13 +164,12 @@ class PlayRedux(threading.Thread):
                     self.set_area()
                     self.background_subtraction()
                     
-                    # Current highest green strum hold is 1530
                     if(np.sum(self.gn_df) > 800 and current_time() - self.green_strum > 38):
                         print(str(current_time() - self.green_strum) + " green strum")
                         self.green_strum = current_time()
                         self.played = True
                         self.notes.append('a')
-                        self.img_check = self.gn_mask
+                        # self.img_check = self.gn_mask
                         if((np.sum(self.r_df) > 200 or np.sum(self.r_df_t) > 200) and current_time() - self.red_strum > 38):
                             self.red_strum = current_time()
                             self.played = True
@@ -258,6 +255,7 @@ class PlayRedux(threading.Thread):
                             self.orange_strum = current_time()
                             self.played = True
                             self.notes.append('g')
+                            
                     # Current highest orange that is not a note is 1530
                     elif(np.sum(self.or_df) > 1600 and current_time() - self.orange_strum > 38):
                         print(str(current_time() - self.orange_strum) + " orange strum")
@@ -281,7 +279,6 @@ class PlayRedux(threading.Thread):
                             self.blue_strum = current_time()
                             self.played = True
                             self.notes.append('f')
-                    # self.img_check = self.bl_mask
                     # self.save_image()    
                     if (len(self.notes) > 0):
                         self.save_image()
@@ -319,7 +316,7 @@ def on_press(key):
             y=1
             for x in play_thread.images:
                 cv2.rectangle(x['image'], (76, 53), (96,73), (255,0,0), 1)
-                cv2.rectangle(x['image'], (207, 55), (228,73), (255,0,0), 1)
+                cv2.rectangle(x['image'], (212, 55), (228,73), (255,0,0), 1)
                 cv2.rectangle(x['image'], (344, 53), (373,73), (255,0,0), 1)
                 cv2.rectangle(x['image'], (386, 55), (501,68), (255,0,0), 1)
                 cv2.rectangle(x['image'], (529, 55), (559,68), (255,0,0), 1)
@@ -341,15 +338,6 @@ def on_press(key):
             play_thread.release_all()
             play_thread.start_playing()
     elif key == stop_key:
-        # cv2.imwrite('test_image.png', cv2.cvtColor(np.asarray(ImageGrab.grab(bbox=capture_area)), cv2.COLOR_RGB2BGR))
-        # y=1
-        # for x in play_thread.images:
-        #     cv2.rectangle(x['image'], (78, 55), (96,73), (255,0,0), 1)
-        #     cv2.rectangle(x['image'], (207, 55), (228,73), (255,0,0), 1)
-        #     cv2.rectangle(x['image'], (338, 53), (373,73), (255,0,0), 1)
-        #     cv2.rectangle(x['image'], (473, 55), (501,73), (255,0,0), 1)
-        #     cv2.imwrite('img_{}_g{}_r{}_y{}_b{}_{}.png'.format(y, x['green'], x['red'], x['yellow'], x['blue'], x['played']), cv2.cvtColor(x['image'], cv2.COLOR_BGR2RGB))
-        #     y+=1
         play_thread.release_all()
         play_thread.exit()
         listener.stop()
