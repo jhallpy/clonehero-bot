@@ -1,5 +1,11 @@
+from distutils.command.build import build
+from math import dist
+
+
 venv
 *.png
 image_grab.py
-
+/build
+/dist
 !background.png
+!/examples/*.png
