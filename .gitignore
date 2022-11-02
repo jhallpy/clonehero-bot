@@ -9,3 +9,5 @@ image_grab.py
 /dist
 !background.png
 !/examples/*.png
+*.spec
+save_file.py
