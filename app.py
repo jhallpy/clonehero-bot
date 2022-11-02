@@ -34,6 +34,17 @@ class PlayRedux(threading.Thread):
         self.capture_area = capture_area
         self.images = []
         
+        self.g_low = []
+        self.g_low2 = []
+        self.r_low = []
+        self.r_low2 = []
+        self.y_low = []
+        self.y_low2 = []
+        self.b_low = []
+        self.b_low2 = []
+        self.o_low = []
+        self.o_low2 = []
+        
         self.gn_lower = GN_LOWER
         self.gn_upper = GN_UPPER
         self.r_lower = R_LOWER
@@ -59,8 +70,9 @@ class PlayRedux(threading.Thread):
         self.img_check = camera.grab(self.capture_area)
 
     def set_background(self):
+        self.capture()
         # Converts RGB to HSV because DXcam currently captures in RGB
-        converted = cv2.cvtColor(self.background_img, cv2.COLOR_RGB2HSV)
+        converted = cv2.cvtColor(self.img_check, cv2.COLOR_RGB2HSV)
         
         gn_mask_bg = cv2.inRange(converted, self.gn_lower, self.gn_upper)
         r_mask_bg =  cv2.inRange(converted, self.r_lower, self.r_upper)
@@ -164,141 +176,142 @@ class PlayRedux(threading.Thread):
                     self.set_area()
                     self.background_subtraction()
                     
-                    if(np.sum(self.gn_df) > 800 and current_time() - self.green_strum > 38):
+                    if(np.sum(self.gn_df) > 1600 and current_time() - self.green_strum > 41):
+                        self.g_low.append(np.sum(self.gn_df))
                         print(str(current_time() - self.green_strum) + " green strum")
                         self.green_strum = current_time()
                         self.played = True
                         self.notes.append('a')
                         # self.img_check = self.gn_mask
-                        if((np.sum(self.r_df) > 200 or np.sum(self.r_df_t) > 200) and current_time() - self.red_strum > 38):
+                        if((np.sum(self.r_df) > 200 or np.sum(self.r_df_t) > 200) and current_time() - self.red_strum > 41):
                             self.red_strum = current_time()
                             self.played = True
                             self.notes.append('s')
-                        if((np.sum(self.ye_df) > 200 or np.sum(self.ye_df_t) > 200)  and current_time() - self.yellow_strum > 38):
+                        if((np.sum(self.ye_df) > 200 or np.sum(self.ye_df_t) > 200)  and current_time() - self.yellow_strum > 41):
                             self.yellow_strum = current_time()
                             self.played = True
                             self.notes.append('d')
-                        if((np.sum(self.bl_df) > 200 or np.sum(self.bl_df_t) > 200) and current_time() - self.blue_strum > 38):
+                        if((np.sum(self.bl_df) > 200 or np.sum(self.bl_df_t) > 200) and current_time() - self.blue_strum > 41):
                             self.blue_strum = current_time()
                             self.played = True
                             self.notes.append('f')   
-                        if((np.sum(self.or_df) > 200 or np.sum(self.or_df_t) > 200) and current_time() - self.orange_strum > 38):
+                        if((np.sum(self.or_df) > 200 or np.sum(self.or_df_t) > 200) and current_time() - self.orange_strum > 41):
                             self.orange_strum = current_time()
                             self.played = True
                             self.notes.append('g')
                                 
-                    elif(np.sum(self.r_df) > 3000 and current_time() - self.red_strum > 38):
+                    elif(np.sum(self.r_df) > 3000 and current_time() - self.red_strum > 41):
                         print(str(current_time() - self.red_strum) + " red strum")
                         self.red_strum = current_time()
                         self.played = True
                         self.notes.append('s')
                         # self.img_check = self.r_mask
-                        if((np.sum(self.gn_df) > 200 or np.sum(self.gn_df_t) > 200) and current_time() - self.green_strum > 38):
+                        if((np.sum(self.gn_df) > 200 or np.sum(self.gn_df_t) > 200) and current_time() - self.green_strum > 41):
                             self.green_strum = current_time()
                             self.played = True
                             self.notes.append('a')
-                        if((np.sum(self.ye_df) > 200 or np.sum(self.ye_df_t) > 200) and current_time() - self.yellow_strum > 38):
+                        if((np.sum(self.ye_df) > 200 or np.sum(self.ye_df_t) > 200) and current_time() - self.yellow_strum > 41):
                             self.yellow_strum = current_time()
                             self.played = True
                             self.notes.append('d')
-                        if((np.sum(self.bl_df) > 200 or np.sum(self.bl_df_t) > 200) and current_time() - self.blue_strum > 38):
+                        if((np.sum(self.bl_df) > 200 or np.sum(self.bl_df_t) > 200) and current_time() - self.blue_strum > 41):
                             self.blue_strum = current_time()
                             self.played = True
                             self.notes.append('f')   
-                        if((np.sum(self.or_df) > 200 or np.sum(self.or_df_t) > 200) and current_time() - self.orange_strum > 38):
+                        if((np.sum(self.or_df) > 200 or np.sum(self.or_df_t) > 200) and current_time() - self.orange_strum > 41):
                             self.orange_strum = current_time()
                             self.played = True
                             self.notes.append('g')
                                   
-                    elif(np.sum(self.ye_df) > 1500 and current_time() - self.yellow_strum > 38):
+                    elif(np.sum(self.ye_df) > 1500 and current_time() - self.yellow_strum > 41):
                         print(str(current_time() - self.yellow_strum) + " yellow strum")
                         self.yellow_strum = current_time()
                         self.played = True
                         self.notes.append('d')
                         # self.img_check = self.ye_mask
-                        if((np.sum(self.gn_df) > 200 or np.sum(self.gn_df_t) > 200) and current_time() - self.green_strum > 38):
+                        if((np.sum(self.gn_df) > 200 or np.sum(self.gn_df_t) > 200) and current_time() - self.green_strum > 41):
                             self.green_strum = current_time()
                             self.played = True
                             self.notes.append('a')
-                        if((np.sum(self.r_df) > 200 or np.sum(self.r_df_t) > 200) and current_time() - self.red_strum > 38):
+                        if((np.sum(self.r_df) > 200 or np.sum(self.r_df_t) > 200) and current_time() - self.red_strum > 41):
                             self.red_strum = current_time()
                             self.played = True
                             self.notes.append('s')
-                        if((np.sum(self.bl_df) > 200 or np.sum(self.bl_df_t) > 200) and current_time() - self.blue_strum > 38):
+                        if((np.sum(self.bl_df) > 200 or np.sum(self.bl_df_t) > 200) and current_time() - self.blue_strum > 41):
                             self.blue_strum = current_time()
                             self.played = True
                             self.notes.append('f') 
-                        if((np.sum(self.or_df) > 200 or np.sum(self.or_df_t) > 200) and current_time() - self.orange_strum > 38):
+                        if((np.sum(self.or_df) > 200 or np.sum(self.or_df_t) > 200) and current_time() - self.orange_strum > 41):
                             self.orange_strum = current_time()
                             self.played = True
                             self.notes.append('g')
                             
-                    elif(np.sum(self.bl_df) > 1500 and current_time() - self.blue_strum > 38):
+                    elif(np.sum(self.bl_df) > 1500 and current_time() - self.blue_strum > 41):
                         print(str(current_time() - self.blue_strum) + " blue strum")
                         self.blue_strum = current_time()
                         self.played = True
                         self.notes.append('f')
                         # self.img_check = self.bl_mask
-                        if((np.sum(self.gn_df) > 200 or np.sum(self.gn_df_t) > 200) and current_time() - self.green_strum > 38):
+                        if((np.sum(self.gn_df) > 200 or np.sum(self.gn_df_t) > 200) and current_time() - self.green_strum > 41):
                             self.green_strum = current_time()
                             self.played = True
                             self.notes.append('a')
-                        if((np.sum(self.r_df) > 200 or np.sum(self.r_df_t) > 200) and current_time() - self.red_strum > 38):
+                        if((np.sum(self.r_df) > 200 or np.sum(self.r_df_t) > 200) and current_time() - self.red_strum > 41):
                             self.red_strum = current_time()
                             self.played = True
                             self.notes.append('s')
-                        if((np.sum(self.ye_df) > 200 or np.sum(self.ye_df_t) > 200) and current_time() - self.yellow_strum > 38):
+                        if((np.sum(self.ye_df) > 200 or np.sum(self.ye_df_t) > 200) and current_time() - self.yellow_strum > 41):
                             self.yellow_strum = current_time()
                             self.played = True
                             self.notes.append('d')
-                        if((np.sum(self.or_df) > 200 or np.sum(self.or_df_t) > 200) and current_time() - self.orange_strum > 38):
+                        if((np.sum(self.or_df) > 200 or np.sum(self.or_df_t) > 200) and current_time() - self.orange_strum > 41):
                             self.orange_strum = current_time()
                             self.played = True
                             self.notes.append('g')
                             
                     # Current highest orange that is not a note is 1530
-                    elif(np.sum(self.or_df) > 1600 and current_time() - self.orange_strum > 38):
+                    elif(np.sum(self.or_df) > 1600 and current_time() - self.orange_strum > 41):
                         print(str(current_time() - self.orange_strum) + " orange strum")
                         self.orange_strum = current_time()
                         self.played = True
                         self.notes.append('g')
                         # self.img_check = self.or_mask
-                        if((np.sum(self.gn_df) > 200 or np.sum(self.gn_df_t) > 200) and current_time() - self.green_strum > 38):
+                        if((np.sum(self.gn_df) > 200 or np.sum(self.gn_df_t) > 200) and current_time() - self.green_strum > 41):
                             self.green_strum = current_time()
                             self.played = True
                             self.notes.append('a')
-                        if((np.sum(self.r_df) > 200 or np.sum(self.r_df_t) > 200) and current_time() - self.red_strum > 38):
+                        if((np.sum(self.r_df) > 200 or np.sum(self.r_df_t) > 200) and current_time() - self.red_strum > 41):
                             self.red_strum = current_time()
                             self.played = True
                             self.notes.append('s')
-                        if((np.sum(self.ye_df) > 200 or np.sum(self.ye_df_t) > 200) and current_time() - self.yellow_strum > 38):
+                        if((np.sum(self.ye_df) > 200 or np.sum(self.ye_df_t) > 200) and current_time() - self.yellow_strum > 41):
                             self.yellow_strum = current_time()
                             self.played = True
                             self.notes.append('d') 
-                        if((np.sum(self.bl_df) > 200 or np.sum(self.bl_df_t) > 200) and current_time() - self.blue_strum > 38):
+                        if((np.sum(self.bl_df) > 200 or np.sum(self.bl_df_t) > 200) and current_time() - self.blue_strum > 41):
                             self.blue_strum = current_time()
                             self.played = True
                             self.notes.append('f')
-                    # self.save_image()    
                     if (len(self.notes) > 0):
                         self.save_image()
                         self.release_all()
                         self.strum()
                     elif(np.sum(self.gn_df_t) > 0):
-                        self.img_check = self.gn_mask
-                        self.save_image()
-                    elif(np.sum(self.r_df_t) > 0):
-                        self.img_check = self.r_mask
-                        self.save_image()
-                    elif(np.sum(self.ye_df_t) > 0): 
-                        self.img_check = self.ye_mask
-                        self.save_image()
-                    elif(np.sum(self.bl_df_t) > 0): 
-                        self.img_check = self.bl_mask
-                        self.save_image()
-                    elif(np.sum(self.or_df_t) > 0):
-                        self.img_check = self.or_mask
-                        self.save_image()
+                        self.g_low2.append(np.sum(self.gn_df))
+                        # self.img_check = self.gn_mask
+                        # self.save_image()
+                    # elif(np.sum(self.r_df_t) > 0):
+                    #     self.img_check = self.r_mask
+                    #     self.save_image()
+                    # elif(np.sum(self.ye_df_t) > 0): 
+                    #     self.img_check = self.ye_mask
+                    #     self.save_image()
+                    # elif(np.sum(self.bl_df_t) > 0): 
+                    #     self.img_check = self.bl_mask
+                    #     self.save_image()
+                    # elif(np.sum(self.or_df_t) > 0):
+                    #     self.img_check = self.or_mask
+                    #     self.save_image()
                     # print(current_time() - start)
             time.sleep(0.01) 
 
@@ -314,6 +327,10 @@ def on_press(key):
             play_thread.release_all()
             play_thread.stop_playing()
             y=1
+            play_thread.g_low.sort()
+            play_thread.g_low2.sort()
+            print('Green low: ' + str(play_thread.g_low[0]))
+            print('Green low 2: ' + str(play_thread.g_low2[0]))
             for x in play_thread.images:
                 cv2.rectangle(x['image'], (76, 53), (96,73), (255,0,0), 1)
                 cv2.rectangle(x['image'], (212, 55), (228,73), (255,0,0), 1)
@@ -344,7 +361,7 @@ def on_press(key):
         
 with Listener(on_press=on_press) as listener: 
     listener.join()
- 
+
 # def main():
     
     
