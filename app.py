@@ -44,16 +44,16 @@ class PlayRedux(threading.Thread):
         self.capture_area = capture_area
         self.images = []
         
-        self.g_low = []
-        self.g_low2 = []
-        self.r_low = []
-        self.r_low2 = []
-        self.y_low = []
-        self.y_low2 = []
-        self.b_low = []
-        self.b_low2 = []
-        self.o_low = []
-        self.o_low2 = []
+        # self.g_low = []
+        # self.g_low2 = []
+        # self.r_low = []
+        # self.r_low2 = []
+        # self.y_low = []
+        # self.y_low2 = []
+        # self.b_low = []
+        # self.b_low2 = []
+        # self.o_low = []
+        # self.o_low2 = []
         
         self.gn_lower = GN_LOWER
         self.gn_upper = GN_UPPER
@@ -65,6 +65,8 @@ class PlayRedux(threading.Thread):
         self.bl_upper = BL_UPPER
         self.or_lower = OR_LOWER
         self.or_upper = OR_UPPER
+        self.pur_lower = PUR_LOWER
+        self.pur_upper = PUR_UPPER
         
         # self.t_lower = T_R_LOWER
         # self.t_upper = T_R_UPPER
@@ -92,6 +94,7 @@ class PlayRedux(threading.Thread):
         ye_mask_bg = cv2.inRange(converted, self.ye_lower, self.ye_upper)
         bl_mask_bg = cv2.inRange(converted, self.bl_lower, self.bl_upper)
         or_mask_bg = cv2.inRange(converted, self.or_lower, self.or_upper)
+        pur_mask_bg = cv2.inRange(converted, self.pur_lower, self.pur_upper)
         # Green needs to be 2 higher due to star notes very rarely not hitting the box, thus missing the note.
         self.gn_bg = gn_mask_bg[54:72, 77:95]
         self.gn_bg_t = gn_mask_bg[52:56, 48:52]
@@ -108,6 +111,8 @@ class PlayRedux(threading.Thread):
         self.or_bg = or_mask_bg[54:72, 530:643]
         self.or_bg_t = or_mask_bg[52:56, 569:573]
         
+        self.pur_bg = pur_mask_bg[54:72, 530:643]
+        
     def set_area(self):
         if (self.img_check is not None):
             # Converts RGB to HSV because DXcam currently captures in RGB
@@ -118,7 +123,7 @@ class PlayRedux(threading.Thread):
             self.ye_mask = cv2.inRange(converted, self.ye_lower, self.ye_upper)
             self.bl_mask = cv2.inRange(converted, self.bl_lower, self.bl_upper)
             self.or_mask = cv2.inRange(converted, self.or_lower, self.or_upper)
-            
+            self.pur_mask = cv2.inRange(converted, self.pur_lower, self.pur_upper)
         
             # self.test_mask = cv2.inRange(converted, self.t_lower, self.t_upper)
             
@@ -140,7 +145,7 @@ class PlayRedux(threading.Thread):
             self.or_chk = self.or_mask[54:72, 530:643]
             self.or_chk_t = self.or_mask[52:56, 569:573]
             
-            # self.pur_chk = 
+            self.pur_chk = self.pur_mask[54:72, 530:643]
             
     def set_times(self):
         self.green_strum = current_time()
@@ -148,6 +153,7 @@ class PlayRedux(threading.Thread):
         self.yellow_strum = current_time()
         self.blue_strum = current_time()
         self.orange_strum = current_time()
+        self.purple_strum = current_time()
     
     def background_subtraction(self):
         self.gn_df = cv2.subtract(np.asarray(self.gn_chk), np.asarray(self.gn_bg)) + cv2.subtract(np.asarray(self.gn_bg), np.asarray(self.gn_chk))
@@ -160,6 +166,8 @@ class PlayRedux(threading.Thread):
         self.bl_df_t = cv2.subtract(np.asarray(self.bl_chk_t), np.asarray(self.bl_bg_t)) + cv2.subtract(np.asarray(self.bl_bg_t), np.asarray(self.bl_chk_t))
         self.or_df = cv2.subtract(np.asarray(self.or_chk), np.asarray(self.or_bg)) + cv2.subtract(np.asarray(self.or_bg), np.asarray(self.or_chk))
         self.or_df_t = cv2.subtract(np.asarray(self.or_chk_t), np.asarray(self.or_bg_t)) + cv2.subtract(np.asarray(self.or_bg_t), np.asarray(self.or_chk_t))
+        self.pur_df = cv2.subtract(np.asarray(self.pur_chk), np.asarray(self.pur_bg)) + cv2.subtract(np.asarray(self.pur_bg), np.asarray(self.pur_chk))
+        
     def save_image(self):
         self.images.append({"image": self.img_check, 
                             "green": np.sum(self.gn_df), "red": np.sum(self.r_df), "yellow": np.sum(self.ye_df), "blue": np.sum(self.bl_df), "orange": np.sum(self.or_df),
@@ -167,8 +175,12 @@ class PlayRedux(threading.Thread):
                             "played": self.played})
      
     def strum(self):
+        # key_press.release(Key.down)
         for x in self.notes:
-            key_press.press(str(x))
+            if (str(x) == 'p'):
+                continue
+            else:
+                key_press.press(str(x))
         key_press.tap(Key.down)
         
     def release_all(self):
@@ -196,7 +208,7 @@ class PlayRedux(threading.Thread):
                     self.background_subtraction()
                     
                     if(np.sum(self.gn_df) > 1600 and current_time() - self.green_strum > 41):
-                        self.g_low.append(np.sum(self.gn_df))
+                        # self.g_low.append(np.sum(self.gn_df))
                         print(str(current_time() - self.green_strum) + " green strum")
                         self.green_strum = current_time()
                         self.played = True
@@ -311,6 +323,12 @@ class PlayRedux(threading.Thread):
                             self.blue_strum = current_time()
                             self.played = True
                             self.notes.append('f')
+                    
+                    elif(np.sum(self.pur_df) > 100 and current_time() - self.purple_strum > 41):
+                        self.purple_strum = current_time()
+                        self.played = True        
+                        self.notes.append('p')
+                    
                     if (len(self.notes) > 0):
                         # self.img_check = self.test_mask
                         self.save_image()
@@ -347,8 +365,8 @@ def on_press(key):
             play_thread.release_all()
             play_thread.stop_playing()
             y=1
-            play_thread.g_low.sort()
-            play_thread.g_low2.sort()
+            # play_thread.g_low.sort()
+            # play_thread.g_low2.sort()
             # print('Green low: ' + str(play_thread.g_low[0]))
             # print('Green low 2: ' + str(play_thread.g_low2[0]))
             for x in play_thread.images:
