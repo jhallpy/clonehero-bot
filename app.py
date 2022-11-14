@@ -10,6 +10,7 @@ key_press = Controller()
 capture_area = (650,850,1325,970)
 start_stop_key = KeyCode(char='t')
 stop_key = KeyCode(char='y')
+
 # White lines would be picked up with the saturation too high on lower. This shouldn't cause a note issue as their saturation is higher.
 GN_LOWER = np.array([50, 133, 80])
 GN_UPPER = np.array([72, 255, 255])
@@ -39,6 +40,13 @@ class PlayRedux(threading.Thread):
         self.program_running = True
         self.capture_area = capture_area
         self.images = []
+        
+        self.green_time = []
+        self.red_time = []
+        self.yellow_time = []
+        self.blue_time = []
+        self.orange_time = []
+        self.purple_time = []
         
         self.gn_lower = GN_LOWER
         self.gn_upper = GN_UPPER
@@ -174,28 +182,34 @@ class PlayRedux(threading.Thread):
         
     def check_colors(self):
         if(np.sum(self.pur_df) > 100 and np.sum(self.pur_df_t) > 100 and current_time() - self.purple_strum > STRUM_TIME):
+            self.purple_time.append(current_time() - self.purple_strum)
             self.purple_strum = current_time()
             # NOTE: Blue will strum the purple when it is a star note.
             self.blue_strum = current_time()
             self.played = True
             self.notes.append('p')
         if((np.sum(self.gn_df) > 200 or np.sum(self.gn_df_t) > 200) and current_time() - self.green_strum > STRUM_TIME):
+            self.green_time.append(current_time() - self.green_strum)
             self.green_strum = current_time()
             self.played = True
             self.notes.append('a')
         if((np.sum(self.r_df) > 200 or np.sum(self.r_df_t) > 200) and current_time() - self.red_strum > STRUM_TIME):
+            self.red_time.append(current_time() - self.red_strum)
             self.red_strum = current_time()
             self.played = True
             self.notes.append('s')
         if((np.sum(self.ye_df) > 200 or np.sum(self.ye_df_t) > 200)  and current_time() - self.yellow_strum > STRUM_TIME):
+            self.yellow_time.append(current_time() - self.yellow_strum)
             self.yellow_strum = current_time()
             self.played = True
             self.notes.append('d')
         if((np.sum(self.bl_df) > 34000 or np.sum(self.bl_df_t) > 200) and current_time() - self.blue_strum > STRUM_TIME):
+            self.blue_time.append(current_time() - self.blue_strum)
             self.blue_strum = current_time()
             self.played = True
             self.notes.append('f')   
         if((np.sum(self.or_df) > 200 or np.sum(self.or_df_t) > 200) and current_time() - self.orange_strum > STRUM_TIME):
+            self.orange_time.append(current_time() - self.orange_strum)
             self.orange_strum = current_time()
             self.played = True
             self.notes.append('g')
@@ -288,13 +302,27 @@ def on_press(key):
             play_thread.stop_playing()
             y=1
             
-            # try:
-            #     play_thread.r_low.sort()
-            #     print('red low: ' + str(play_thread.r_low[0]))
-            #     play_thread.r_low2.sort(reverse=True)
-            #     print('red low 2: ' + str(play_thread.r_low2[0]))
-            # except:
-            #     print('No red.')
+            try:
+                if (len(play_thread.green_time) > 0):
+                    play_thread.green_time.sort()
+                    print(str(play_thread.green_time[0]) + '\t Green Time')
+                if (len(play_thread.red_time) > 0):
+                    play_thread.red_time.sort()
+                    print(str(play_thread.red_time[0]) + '\t Red Time')
+                if (len(play_thread.yellow_time) > 0):
+                    play_thread.yellow_time.sort()
+                    print(str(play_thread.yellow_time[0]) + '\t Yellow Time')
+                if (len(play_thread.blue_time) > 0):
+                    play_thread.blue_time.sort()
+                    print(str(play_thread.blue_time[0]) + '\t Blue Time')
+                if (len(play_thread.orange_time) > 0):
+                    play_thread.orange_time.sort()
+                    print(str(play_thread.orange_time[0]) + '\t Orange Time')
+                if (len(play_thread.purple_time) > 0):
+                    play_thread.purple_time.sort()
+                    print(str(play_thread.purple_time[0]) + '\t Purple Time')
+            except:
+                print('Error')
 
             # NOTE: Only useful for saving images for debugging purposes. 
             for x in play_thread.images:
