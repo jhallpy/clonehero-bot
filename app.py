@@ -11,11 +11,12 @@ from matplotlib import pyplot as plt
 
 camera = dxcam.create()
 key_press = Controller()
-capture_area = (595, 900, 1325, 985)
+# capture_area = (595, 900, 1325, 985)
+capture_area = (595, 925, 1325, 987)
 start_stop_key = KeyCode(char='t')
 stop_key = KeyCode(char='y')
 
-STRUM_TIME = 29
+STRUM_TIME = 8
 
 class PlayRedux(threading.Thread):
     def __init__(self):
@@ -86,34 +87,39 @@ class PlayRedux(threading.Thread):
                 if (self.img_check is None):
                     continue
                 else:
-                    # self.template_match = match.match_all(self.img_check)
+                    self.template_match = match.match_all(self.img_check)
                     # print(self.test)
-                    self.save_image()
-                    # if self.template_match:
-                    #     if 'a' in self.template_match and current_time() - self.green_strum > STRUM_TIME:
-                    #         self.green_time.append(current_time() - self.green_strum)
-                    #         self.green_strum = current_time()
-                    #         self.notes.append('a')
-                    #     if 's' in self.template_match and current_time() - self.red_strum > STRUM_TIME:
-                    #         self.red_time.append(current_time() - self.red_strum)
-                    #         self.red_strum = current_time()
-                    #         self.notes.append('s')
-                    #     if 'd' in self.template_match and current_time() - self.yellow_strum > STRUM_TIME:
-                    #         self.yellow_time.append(current_time() - self.yellow_strum)
-                    #         self.yellow_strum = current_time()
-                    #         self.notes.append('d')
-                    #     if 'f' in self.template_match and current_time() - self.blue_strum > STRUM_TIME:
-                    #         self.blue_time.append(current_time() - self.blue_strum)
-                    #         self.blue_strum = current_time()
-                    #         self.notes.append('f')
-                    #     if 'g' in self.template_match and current_time() - self.orange_strum > STRUM_TIME:
-                    #         self.orange_time.append(current_time() - self.orange_strum)
-                    #         self.orange_strum = current_time()
-                    #         self.notes.append('g')
-                    #     # print(self.notes) 
-                    #     if self.notes:
-                    #         self.save_image()
-                    #         # self.strum()
+                    # self.save_image()
+                    if self.template_match:
+                        if 'a' in self.template_match and current_time() - self.green_strum > STRUM_TIME:
+                            self.green_time.append(current_time() - self.green_strum)
+                            self.green_strum = current_time()
+                            self.notes.append('a')
+                            self.save_image()
+                        if 's' in self.template_match and current_time() - self.red_strum > STRUM_TIME:
+                            self.red_time.append(current_time() - self.red_strum)
+                            self.red_strum = current_time()
+                            self.notes.append('s')
+                            # self.save_image()
+                        if 'd' in self.template_match and current_time() - self.yellow_strum > STRUM_TIME:
+                            self.yellow_time.append(current_time() - self.yellow_strum)
+                            self.yellow_strum = current_time()
+                            self.notes.append('d')
+                            self.save_image()
+                        if 'f' in self.template_match and current_time() - self.blue_strum > STRUM_TIME:
+                            self.blue_time.append(current_time() - self.blue_strum)
+                            self.blue_strum = current_time()
+                            self.notes.append('f')
+                        if 'g' in self.template_match and current_time() - self.orange_strum > STRUM_TIME:
+                            self.orange_time.append(current_time() - self.orange_strum)
+                            self.orange_strum = current_time()
+                            self.notes.append('g')
+                        # self.save_image()
+                        # print(self.notes) 
+                        # if self.notes:
+                        #     # print('strum')
+                        #     # self.save_image()
+                        #     self.strum()
                         
                 # try:
                 #     print('FPS:', 1000 / (current_time() - start))
@@ -163,7 +169,7 @@ def on_press(key):
             for img_num in play_thread.images:
                 
                 imgname = os.path.join(IMAGES_PATH, str(y) + str(img_num["notes"]) +'.png')
-                corrected_colors = cv2.cvtColor(img_num['image'], cv2.COLOR_BGR2GRAY)
+                corrected_colors = cv2.cvtColor(img_num['image'], cv2.COLOR_BGR2RGB)
                 cv2.imwrite(imgname, corrected_colors)
                 y+=1   
 
@@ -177,6 +183,7 @@ def on_press(key):
     elif key == stop_key:
         play_thread.release_all()
         play_thread.exit()
+        print('Exiting...')
         listener.stop()
         
 with Listener(on_press=on_press) as listener: 

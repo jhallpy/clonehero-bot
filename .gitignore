@@ -6,11 +6,14 @@ from math import dist
 *.png
 /build
 /dist
-!background.png
-!/examples/*.png
 __pycache__
 
 *.spec
 save_file.py
 test.py
 image_grab.py
+
+
+!background.png
+!/examples/*.png
+!/data/*/*.png
