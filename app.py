@@ -16,7 +16,7 @@ capture_area = (595, 925, 1325, 987)
 start_stop_key = KeyCode(char='t')
 stop_key = KeyCode(char='y')
 
-STRUM_TIME = 8
+STRUM_TIME = 3
 
 class PlayRedux(threading.Thread):
     def __init__(self):
@@ -105,21 +105,22 @@ class PlayRedux(threading.Thread):
                             self.yellow_time.append(current_time() - self.yellow_strum)
                             self.yellow_strum = current_time()
                             self.notes.append('d')
-                            self.save_image()
+                            # self.save_image()
                         if 'f' in self.template_match and current_time() - self.blue_strum > STRUM_TIME:
                             self.blue_time.append(current_time() - self.blue_strum)
                             self.blue_strum = current_time()
                             self.notes.append('f')
+                            # self.save_image()
                         if 'g' in self.template_match and current_time() - self.orange_strum > STRUM_TIME:
                             self.orange_time.append(current_time() - self.orange_strum)
                             self.orange_strum = current_time()
                             self.notes.append('g')
                         # self.save_image()
                         # print(self.notes) 
-                        # if self.notes:
+                        if self.notes:
                         #     # print('strum')
                         #     # self.save_image()
-                        #     self.strum()
+                            self.strum()
                         
                 # try:
                 #     print('FPS:', 1000 / (current_time() - start))
@@ -169,7 +170,7 @@ def on_press(key):
             for img_num in play_thread.images:
                 
                 imgname = os.path.join(IMAGES_PATH, str(y) + str(img_num["notes"]) +'.png')
-                corrected_colors = cv2.cvtColor(img_num['image'], cv2.COLOR_BGR2RGB)
+                corrected_colors = cv2.cvtColor(img_num['image'], cv2.COLOR_BGR2GRAY)
                 cv2.imwrite(imgname, corrected_colors)
                 y+=1   
 
