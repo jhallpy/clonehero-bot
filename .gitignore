@@ -1,19 +1,14 @@
-from distutils.command.build import build
-from math import dist
-
-
 .venv
+.vscode
+
 *.png
 /build
 /dist
+!background.png
+!/examples/*.png
 __pycache__
 
 *.spec
 save_file.py
-test.py
 image_grab.py
-data/images
-
-!background.png
-!/examples/*.png
-!/data/*/*.png
+test.py
