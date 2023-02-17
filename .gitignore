@@ -14,3 +14,4 @@ __pycache__
 *.spec
 save_file.py
 image_grab.py
+test.py
