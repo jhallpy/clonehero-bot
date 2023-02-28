@@ -1,12 +1,9 @@
 import numpy as np
 import time
-import os
 import cv2
 import dxcam
 import threading
-import multiprocessing
 import empty_file as ef
-import psutil
 
 # TODO: Add a second capture in the same area but smaller. This should solve the problem of notes not disappearing correctly in the game.
 # TODO: Add a GUI with PyQt for ease of use.
@@ -43,7 +40,7 @@ S_UPPER = np.array([32, 255, 255])
 P_LOWER = np.array([131, 20, 145])
 P_UPPER = np.array([179, 255, 252])
 
-STRUM_TIME = 11
+STRUM_TIME = 6
 
 # Yellow
 # (hMin = 84 , sMin = 170, vMin = 0), (hMax = 93 , sMax = 255, vMax = 255)
@@ -355,28 +352,16 @@ class PlayRedux(threading.Thread):
         self.set_times()
         while self.program_running:
             while self.running:
+                start = current_time()
                 self.capture()
-                # try:
-                #     if 1000 / (current_time() - start) < 144:
-                #         print("FPS:", 1000 / (current_time() - start))
-                # except ZeroDivisionError:
-                #     pass
-                self.notes = []
-
                 # NOTE: dxcam will return None if the image it takes would be
                 # the exact same image as the previous image.
                 if self.img_check is None:
                     continue
-
                 else:
+                    self.notes = []
                     self.set_area()
-                    start = current_time()
                     self.background_subtraction()
-                    try:
-                        if 1000 / (current_time() - start) < 144:
-                            print("FPS:", 1000 / (current_time() - start))
-                    except ZeroDivisionError:
-                        pass
                     self.save_image()
                     if (
                         self.pur_df > 100
@@ -411,15 +396,14 @@ class PlayRedux(threading.Thread):
                         self.check_colors()
 
                     if self.notes:
-                        # self.save_image()
                         self.release_all()
                         self.strum()
 
-                # try:
-                #     if 1000 / (current_time() - start) < 144:
-                #         print("FPS:", 1000 / (current_time() - start))
-                # except ZeroDivisionError:
-                #     continue
+                try:
+                    if 1000 / (current_time() - start) < 144:
+                        print("FPS:", 1000 / (current_time() - start))
+                except ZeroDivisionError:
+                    pass
 
             time.sleep(0.01)
 
@@ -431,6 +415,8 @@ def current_time():
 def on_press(key):
     if key == start_stop_key:
         if play_thread.running:
+            play_thread.release_all()
+            play_thread.release_all()
             play_thread.release_all()
             play_thread.stop_playing()
             key_press.tap(Key.enter)
@@ -460,7 +446,6 @@ def on_press(key):
                 print("There has been an error:", e)
 
             # NOTE: Only useful for saving images for debugging purposes.
-
             # Converts doubly-linked list to a list.
             save = list(play_thread.images)
 
@@ -501,25 +486,6 @@ def on_press(key):
                     ),
                     cv2.cvtColor(x["image"], cv2.COLOR_BGR2RGB),
                 )
-
-                # cv2.imwrite(
-                #     "data/images/img_{}_g{}_r{}_y{}_b{}_o{}_MASKED"
-                #     ".png".format(
-                #         y,
-                #         x["green"],
-                #         x["red"],
-                #         x["yellow"],
-                #         x["blue"],
-                #         x["orange"],
-                #     ),
-                #     # x['image'])
-                #     cv2.inRange(
-                #         cv2.cvtColor(x["image"], cv2.COLOR_BGR2HSV),
-                #         play_thread.w_lower,
-                #         play_thread.w_upper,
-                #     ),
-                # )
-
                 y += 1
             print("Bot Stopped.")
         else:
